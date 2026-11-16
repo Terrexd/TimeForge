@@ -1,6 +1,6 @@
 package es.timeforge.service;
 
-import es.timeforge.model.Domain.*;
+import es.timeforge.model.*;
 import java.time.*;
 import java.util.*;
 import java.util.random.RandomGenerator;

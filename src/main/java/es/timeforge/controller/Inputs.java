@@ -1,6 +1,6 @@
 package es.timeforge.controller;
 
-import es.timeforge.model.Domain.*;
+import es.timeforge.model.*;
 import jakarta.validation.constraints.*;
 
 public final class Inputs {

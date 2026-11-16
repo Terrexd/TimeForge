@@ -1,7 +1,7 @@
 package es.timeforge.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import es.timeforge.model.Domain.MediaType;
+import es.timeforge.model.MediaType;
 import es.timeforge.service.BusinessException;
 import es.timeforge.controller.Inputs.WorkInput;
 import java.util.StringJoiner;

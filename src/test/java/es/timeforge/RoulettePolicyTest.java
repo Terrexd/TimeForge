@@ -1,6 +1,6 @@
 package es.timeforge;
 
-import es.timeforge.model.Domain.*;
+import es.timeforge.model.*;
 import es.timeforge.service.*;
 import java.time.*;
 import java.util.*;

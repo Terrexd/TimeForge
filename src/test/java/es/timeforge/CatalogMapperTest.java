@@ -2,7 +2,7 @@ package es.timeforge;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.timeforge.integration.CatalogMapper;
-import es.timeforge.model.Domain.MediaType;
+import es.timeforge.model.MediaType;
 import es.timeforge.service.BusinessException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

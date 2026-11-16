@@ -1,6 +1,6 @@
 package es.timeforge.service;
 
-import es.timeforge.model.Domain.*;
+import es.timeforge.model.*;
 import es.timeforge.repository.Store;
 import java.time.*;
 import org.springframework.stereotype.Service;

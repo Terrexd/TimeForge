@@ -1,6 +1,6 @@
 package es.timeforge.integration;
 
-import es.timeforge.model.Domain.*;
+import es.timeforge.model.*;
 import es.timeforge.repository.Store;
 import es.timeforge.service.*;
 import java.time.*;
