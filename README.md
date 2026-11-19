@@ -14,14 +14,13 @@ Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución d
 
 ## Añadir videojuegos desde RAWG
 
-Obtén tu clave en [RAWG](https://rawg.io/apidocs). Desde la carpeta del proyecto, configura la clave en PowerShell y arranca el servidor en esa misma ventana.
+Obtén tu clave en [RAWG](https://rawg.io/apidocs). En la carpeta de `iniciar.bat`, crea o abre el archivo `.env` y guarda una línea con tu clave, sin comillas. Git ignora este archivo.
 
-```powershell
-$env:RAWG_API_KEY = 'TU_CLAVE_DE_RAWG'
-.\mvnw.cmd spring-boot:run
+```properties
+RAWG_API_KEY=tu_clave_aqui
 ```
 
-En **Biblioteca de ocio → Añadir juego desde RAWG**, escribe el nombre del juego, pulsa **Buscar juegos** y después **Añadir** junto al resultado. La ficha se guarda en tu biblioteca con sus géneros, sinopsis y portada cuando están disponibles.
+Cierra el servidor si está abierto y vuelve a ejecutar `iniciar.bat`. En **Biblioteca de ocio → Buscar online**, selecciona **Videojuegos · RAWG**, escribe el título y pulsa **Buscar**. Pulsa **Añadir** junto al resultado para guardarlo en tu biblioteca.
 
 ## Dónde está cada cosa
 

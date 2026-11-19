@@ -24,7 +24,7 @@ public class CatalogoExterno {
             @Value("${timeforge.rawg-key}") String rawgKey) {
         this.remote = remote;
         this.catalog = catalog;
-        this.rawgKey = rawgKey;
+        this.rawgKey = rawgKey.strip();
     }
 
     private String endpoint(String source) {
@@ -32,8 +32,9 @@ public class CatalogoExterno {
         case "JIKAN_ANIME" -> "https://api.jikan.moe/v4/anime";
         case "JIKAN_MANGA" -> "https://api.jikan.moe/v4/manga";
         case "RAWG" -> {
-            ErrorNegocio.require(!rawgKey.isBlank(),
-                    "Configura RAWG_API_KEY para buscar videojuegos; el alta manual sigue disponible");
+            if (rawgKey.isEmpty()) {
+                throw new ErrorNegocio(503, "Falta la clave de RAWG en el servidor. Guarda RAWG_API_KEY en el archivo .env junto a iniciar.bat y reinicia TimeForge.");
+            }
             yield "https://api.rawg.io/api/games";
         }
         default -> throw new ErrorNegocio("Fuente desconocida: " + source);

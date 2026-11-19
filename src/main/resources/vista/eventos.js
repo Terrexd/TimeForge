@@ -96,7 +96,6 @@ document.addEventListener("click", async (event) => {
   if (action === "new-work") return formularioObra();
   if (action === "edit-progress") return formularioProgreso(id);
   if (action === "search-external") return buscarObrasExternas();
-  if (action === "search-rawg") return buscarJuegosRawg();
   if (action === "find-friend") return buscarAmigo();
   if (b.dataset.task) {
     if (busy) return;
