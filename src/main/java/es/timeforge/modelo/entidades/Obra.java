@@ -34,4 +34,14 @@ public class Obra extends EntidadBase {
     public byte[] cover;
 
     public String coverType;
+
+    public Double getHorasHistoriaPrincipal() {
+        return type == TipoMedio.GAME ? es.timeforge.modelo.HistoriasPrincipales.horas(title) : null;
+    }
+
+    public double objetivoProgreso() {
+        if (type != TipoMedio.GAME) return totalUnits;
+        Double horas = getHorasHistoriaPrincipal();
+        return horas == null ? 0 : horas;
+    }
 }

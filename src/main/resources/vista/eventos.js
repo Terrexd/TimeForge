@@ -365,6 +365,7 @@ document.addEventListener("submit", async (event) => {
   }
 });
 document.addEventListener("change", (e) => {
+  if (e.target.matches("#work-form select[name=type]")) mostrarUnidadesObra();
   if (e.target.name === "minutes") updateSpin();
   if (e.target.id === "catalog-type") {
     S.catalogType = e.target.value;

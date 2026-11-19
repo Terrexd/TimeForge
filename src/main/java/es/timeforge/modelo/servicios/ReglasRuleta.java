@@ -26,7 +26,8 @@ public final class ReglasRuleta {
 
     public static double weight(Progreso p, Instant now) {
         long days = Math.max(0, Duration.between(p.lastInteraction, now).toDays());
-        double completion = p.work.totalUnits > 0 ? Math.min(1, p.currentUnits / p.work.totalUnits) : 0;
+        double objetivo = p.work.objetivoProgreso();
+        double completion = objetivo > 0 ? Math.min(1, p.currentUnits / objetivo) : 0;
         return 1 + Math.min(days, 60) / 7.0 + completion * 3;
     }
 

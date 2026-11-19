@@ -24,8 +24,8 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 **RAWG.** El recorrido acordado es **Biblioteca de ocio → Buscar online → Videojuegos · RAWG → Buscar → Añadir**. Se retiró el formulario duplicado. Spring carga `RAWG_API_KEY` desde el entorno o desde el archivo local `.env` situado junto a `iniciar.bat`. La clave pertenece al servidor y Git ignora ese archivo.
 
-**Última verificación funcional.** Pasaron 34 pruebas. La búsqueda e importación de un juego se comprobó con una respuesta simulada de RAWG y una clave de prueba cargada desde `.env`. En la última revisión local, `RAWG_API_KEY` seguía vacía. Está pendiente probar **Cyberpunk 2077** con el servicio real una vez configurada la clave y reiniciado el servidor.
+**Biblioteca de videojuegos.** La duración de la campaña usa estimaciones locales de HowLongToBeat por título. Los títulos ambiguos o desconocidos muestran «Sin estimación». Las horas jugadas se registran aparte. Las portadas ausentes se recuperan al abrir la biblioteca desde RAWG o Steam y se guardan en la base de datos.
 
 ## Última tarea
 
-Para solicitar la clave de RAWG, se comprobó que el repositorio configurado como `origin` es `https://github.com/Terrexd/TimeForge`. Se sugirió usar esa URL en el formulario y describir TimeForge como un proyecto educativo que permite buscar juegos en RAWG y guardarlos en una biblioteca personal.
+Se actualizaron las tarjetas y el formulario de progreso para mostrar la portada y las horas de historia principal también en juegos ya guardados. Pasaron 35 pruebas. En Chrome, con el JAR de inicio y una base temporal, se comprobó que Cyberpunk 2077 muestra unas 26 h y una imagen real de Steam de 460 × 215 píxeles. La prueba de importación de RAWG sigue usando una respuesta simulada.

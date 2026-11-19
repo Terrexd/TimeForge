@@ -38,14 +38,15 @@ public class ServicioMisiones {
         var existing = repositorio.misiones(user, week);
         if (existing.isEmpty()) {
             repositorio.catalogoPersonal(user).stream()
-                    .filter(p -> p.state != EstadoProgreso.COMPLETED && p.currentUnits < p.work.totalUnits)
+                    .filter(p -> p.state != EstadoProgreso.COMPLETED
+                            && (p.work.type == TipoMedio.GAME || p.currentUnits < p.work.totalUnits))
                     .sorted(Comparator.comparing(p -> p.lastInteraction)).limit(3).forEach(p -> {
                         var m = new Mision();
                         m.owner = a;
                         m.work = p.work;
                         m.weekStart = week;
                         m.baseline = p.currentUnits;
-                        m.target = Math.min(3, p.work.totalUnits - p.currentUnits);
+                        m.target = p.work.type == TipoMedio.GAME ? 3 : Math.min(3, p.work.totalUnits - p.currentUnits);
                         m.description = "Retoma «" + p.work.title + "»: avanza " + m.target + " unidades";
                         m.expiresAt = week.plusWeeks(1).atStartOfDay(ServicioLogros.ZONE).toInstant();
                         repositorio.guardar(m);

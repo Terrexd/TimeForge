@@ -78,9 +78,10 @@ public class ServicioCatalogo {
     public Progreso update(long user, long id, DatosProgreso input) {
         var a = accounts.locked(user);
         var p = owned(user, id);
-        require(Double.isFinite(input.currentUnits()) && input.currentUnits() <= p.work.totalUnits,
+        boolean juego = p.work.type == TipoMedio.GAME;
+        require(Double.isFinite(input.currentUnits()) && (juego || input.currentUnits() <= p.work.totalUnits),
                 "El progreso actual no puede superar el total de la obra");
-        require(input.state() != EstadoProgreso.COMPLETED || input.currentUnits() == p.work.totalUnits,
+        require(juego || input.state() != EstadoProgreso.COMPLETED || input.currentUnits() == p.work.totalUnits,
                 "Para completar la obra debes alcanzar su total de unidades");
         p.state = input.state();
         p.currentUnits = input.currentUnits();

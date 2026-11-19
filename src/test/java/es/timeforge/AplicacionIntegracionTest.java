@@ -69,8 +69,18 @@ class AplicacionIntegracionTest {
                         json.readTree("""
                             {"name":"Hollow Knight","genres":[{"name":"Adventure"}],"playtime":27}
                             """);
+                    case "https://store.steampowered.com/api/storesearch/?term=Cyberpunk+2077&l=english&cc=US" ->
+                        json.readTree("""
+                            {"items":[{"id":1091500,"name":"Cyberpunk 2077"}]}
+                            """);
                     default -> throw new AssertionError("Petición inesperada al catálogo de prueba");
                     };
+                }
+
+                @Override
+                public byte[] cover(String url) {
+                    assertEquals("https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg", url);
+                    return new byte[]{(byte) 0xff, (byte) 0xd8, (byte) 0xff};
                 }
             };
         }
@@ -165,7 +175,22 @@ class AplicacionIntegracionTest {
                 .andExpect(jsonPath("$[0].work.title").value("Hollow Knight"))
                 .andExpect(jsonPath("$[0].work.source").value("RAWG"))
                 .andExpect(jsonPath("$[0].work.type").value("GAME"))
-                .andExpect(jsonPath("$[0].work.totalUnits").value(27));
+                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(27.0));
+    }
+
+    @Test
+    void juegoManualConservaHorasJugadasYRecuperaPortada() throws Exception {
+        var usuario = account();
+        var sesion = login(usuario);
+        var progreso = catalog.add(usuario.id, new DatosObra("Cyberpunk 2077", TipoMedio.GAME,
+                "", "", 12, 15, false));
+        catalog.update(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 32, 0, 0, ""));
+        mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(26.0))
+                .andExpect(jsonPath("$[0].currentUnits").value(32));
+        mvc.perform(get("/api/covers/" + progreso.work.id).session(sesion)).andExpect(status().isOk())
+                .andExpect(content().contentType("image/jpeg"));
+        assertNotNull(tx.execute(s -> repositorio.buscarPorId(Obra.class, progreso.work.id).cover));
     }
 
     @Test

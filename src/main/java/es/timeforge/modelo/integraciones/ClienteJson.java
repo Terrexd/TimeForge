@@ -43,6 +43,7 @@ public class ClienteJson {
         URI uri = URI.create(url);
         String host = uri.getHost();
         if (!"https".equals(uri.getScheme()) || host == null || !(host.equals("cdn.myanimelist.net")
+                || host.equals("cdn.akamai.steamstatic.com")
                 || host.equals("media.rawg.io") || host.endsWith("anilist.co")))
             return null;
         var response = client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),
@@ -50,5 +51,12 @@ public class ClienteJson {
         if (response.statusCode() != 200 || response.body().length > 2_000_000)
             return null;
         return response.body();
+    }
+
+    public static String tipoImagen(byte[] datos) {
+        if (datos.length >= 8 && datos[0] == (byte) 0x89 && datos[1] == 'P') return "image/png";
+        if (datos.length >= 12 && datos[0] == 'R' && datos[8] == 'W') return "image/webp";
+        if (datos.length >= 6 && datos[0] == 'G' && datos[1] == 'I') return "image/gif";
+        return "image/jpeg";
     }
 }

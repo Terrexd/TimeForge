@@ -22,6 +22,12 @@ RAWG_API_KEY=tu_clave_aqui
 
 Cierra el servidor si está abierto y vuelve a ejecutar `iniciar.bat`. En **Biblioteca de ocio → Buscar online**, selecciona **Videojuegos · RAWG**, escribe el título y pulsa **Buscar**. Pulsa **Añadir** junto al resultado para guardarlo en tu biblioteca.
 
+## Portadas y horas de los videojuegos
+
+La biblioteca muestra las horas jugadas y una estimación de la historia principal. Puedes registrar más horas que la estimación o marcar el juego como completado si terminas antes. Si el título carece de una coincidencia única, aparece «Sin estimación».
+
+Las duraciones se consultan por título en una copia local de los campos de nombre y horas de campaña del [catálogo de HowLongToBeat recopilado para LaunchBox](https://github.com/johagan94/hltb-dataset-plugin/tree/main/dataset). La portada se guarda al importar desde RAWG. Al abrir una ficha antigua o manual sin imagen, el servidor intenta recuperarla y la conserva para las siguientes visitas. Para juegos disponibles en Steam puede usar la imagen de su tienda.
+
 ## Dónde está cada cosa
 
 | Parte | Carpeta | Qué encontrarás |

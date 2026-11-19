@@ -98,12 +98,20 @@ public class ControladorCatalogo {
 
     /** Sirve la portada almacenada de una obra multimedia. */
     @GetMapping("/covers/{id}")
-    @Transactional(readOnly = true)
     public ResponseEntity<byte[]> obtenerPortada(Principal principal, @PathVariable long id) {
         user(principal);
         var work = repositorio.buscarPorId(Obra.class, id);
-        if (work == null || work.cover == null)
+        if (work == null)
             return ResponseEntity.notFound().build();
+        if (work.cover == null && work.type == es.timeforge.modelo.entidades.TipoMedio.GAME) {
+            work.cover = external.portadaJuego(work);
+            if (work.cover != null) {
+                work.coverType = es.timeforge.modelo.integraciones.ClienteJson.tipoImagen(work.cover);
+                repositorio.guardarPortadaSiFalta(id, work.cover, work.coverType);
+            }
+        }
+        if (work.cover == null)
+            return ResponseEntity.status(404).cacheControl(CacheControl.maxAge(Duration.ofMinutes(5)).cachePrivate()).build();
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(work.coverType))
                 .cacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePrivate()).body(work.cover);
     }

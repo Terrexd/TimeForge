@@ -126,13 +126,22 @@ function pantallaCronometro() {
 }
 function tarjetaObra(p) {
   const w = p.work;
+  const juego = w.type === "GAME";
+  const objetivo = juego ? w.horasHistoriaPrincipal : w.totalUnits;
+  const horas = objetivo?.toLocaleString("es-ES");
+  const etiqueta = juego ? `${p.currentUnits} h jugadas` : `${p.currentUnits} / ${w.totalUnits} ${units(w.type)}`;
+  let porcentaje = 0;
+  if (objetivo) porcentaje = p.state === "COMPLETED" ? 100 : Math.min(100, Math.round(100 * p.currentUnits / objetivo));
+  const barra = objetivo ? `<progress value="${porcentaje}" max="100"></progress>` : "";
+  const duracion = juego ? (objetivo ? `Historia principal · ≈ ${horas} h` : "Historia principal · Sin estimación")
+    : `${w.minutesPerUnit} min por unidad`;
   return `<article class="card work-card"><div class="poster ${w.type}"><img src="/api/covers/${w.id}" alt="" loading="lazy" data-cover><span class="tag">${types[w.type]}</span><strong class="initials">${esc(
     w.title
       .split(" ")
       .map((s) => s[0])
       .slice(0, 3)
       .join(""),
-  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><h3>${esc(w.title)}</h3><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="progress-label"><span>${p.currentUnits} / ${w.totalUnits} ${units(w.type)}</span><strong>${Math.round((p.currentUnits / w.totalUnits) * 100)}%</strong></div><progress value="${p.currentUnits}" max="${w.totalUnits}"></progress><p>${w.minutesPerUnit} min por unidad${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
+  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><h3>${esc(w.title)}</h3><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="progress-label"><span>${etiqueta}</span>${objetivo ? `<strong>${porcentaje}%</strong>` : ""}</div>${barra}<p>${duracion}${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
 }
 function pantallaCatalogo() {
   let list = S.catalog.filter(

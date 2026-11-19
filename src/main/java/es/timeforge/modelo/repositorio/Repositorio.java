@@ -18,6 +18,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class Repositorio {
 
+    @org.springframework.transaction.annotation.Transactional
+    public void guardarPortadaSiFalta(long id, byte[] imagen, String tipo) {
+        em.createQuery("update Obra set cover = :imagen, coverType = :tipo where id = :id and cover is null")
+                .setParameter("imagen", imagen).setParameter("tipo", tipo).setParameter("id", id).executeUpdate();
+    }
+
     @PersistenceContext
     private EntityManager em;
 

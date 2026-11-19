@@ -81,7 +81,7 @@ public class CatalogoExterno {
             var imported = ConversorCatalogo.map(source, remote.get(url));
             byte[] cover = optionalCover(imported.coverUrl());
             return catalog.addImported(user, imported.input(), source, Long.toString(id), cover,
-                    "image/jpeg");
+                    cover == null ? null : ClienteJson.tipoImagen(cover));
         } catch (ErrorNegocio e) {
             throw e;
         } catch (Exception e) {
@@ -125,6 +125,35 @@ public class CatalogoExterno {
         var imported = ConversorCatalogo.mapAniList(source, media);
         byte[] cover = optionalCover(imported.coverUrl());
         return catalog.addImported(user, imported.input(), source, Long.toString(id), cover, "image/jpeg");
+    }
+
+    /** Recupera también las portadas de juegos añadidos a mano o importados sin imagen. */
+    public byte[] portadaJuego(Obra obra) {
+        if ("RAWG".equals(obra.source) && !rawgKey.isBlank() && obra.externalId.matches("[0-9]+")) {
+            try {
+                var ficha = remote.get(conClaveRawg(endpoint("RAWG") + "/" + obra.externalId, "RAWG"));
+                byte[] imagen = optionalCover(ficha.path("background_image").asText(""));
+                if (imagen != null) return imagen;
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (Exception ignored) {
+                // También hay juegos con portada disponible en Steam.
+            }
+        }
+        try {
+            String titulo = URLEncoder.encode(obra.title, StandardCharsets.UTF_8);
+            var juegos = remote.get("https://store.steampowered.com/api/storesearch/?term=" + titulo + "&l=english&cc=US");
+            for (var juego : juegos.path("items")) {
+                if (obra.title.equalsIgnoreCase(juego.path("name").asText()) && juego.path("id").asLong() > 0)
+                    return optionalCover("https://cdn.akamai.steamstatic.com/steam/apps/" + juego.get("id").asLong() + "/header.jpg");
+            }
+        } catch (InterruptedException error) {
+            Thread.currentThread().interrupt();
+        } catch (Exception ignored) {
+            // La biblioteca sigue mostrando el título si la tienda está fuera de línea.
+        }
+        return null;
     }
 
     private byte[] optionalCover(String url) {
