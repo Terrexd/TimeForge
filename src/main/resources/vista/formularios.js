@@ -42,6 +42,16 @@ function formularioProgreso(id) {
     `<form id="progress-form" data-id="${p.id}"><div class="form-grid"><label class="field">Estado<select name="state">${["PENDING", "IN_PROGRESS", "PAUSED", "COMPLETED"].map((v) => `<option value="${v}" ${p.state === v ? "selected" : ""}>${states[v]}</option>`).join("")}</select></label>${field("Progreso (" + units(w.type) + ") · total " + w.totalUnits, "currentUnits", p.currentUnits, `type="number" min="0" max="${w.totalUnits}" step="${w.type === "GAME" ? "0.1" : "1"}" required`)}${field("Tomo / volumen actual", "volume", p.volume, 'type="number" min="0" max="10000"')}${field("Temporada actual", "season", p.season, 'type="number" min="0" max="10000"')}${field("Plataforma", "platform", p.platform, 'maxlength="150"')}</div><p class="help">${esc(w.synopsis || "Sin sinopsis registrada.")}</p>${actions("Guardar progreso")}</form><div class="form-actions"><button data-action="classify" data-id="${p.id}">✧ Sugerir etiquetas con IA</button><button class="danger" data-action="delete-work" data-id="${p.id}">Retirar de biblioteca</button></div><p class="oracle-text" id="classification" hidden></p>`,
   );
 }
+function buscarJuegosRawg() {
+  modal(
+    "Añadir juego desde RAWG",
+    `<form id="external-search">
+      <input type="hidden" name="source" value="RAWG">
+      ${field("Nombre del juego", "q", "", 'required minlength="2" maxlength="100" autofocus')}
+      ${actions("Buscar juegos")}
+    </form><div class="search-results" id="external-results" aria-live="polite"></div>`,
+  );
+}
 function buscarObrasExternas() {
   modal(
     "Descubre tu próxima historia",

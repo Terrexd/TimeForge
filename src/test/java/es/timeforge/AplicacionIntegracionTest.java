@@ -2,6 +2,7 @@ package es.timeforge;
 
 import com.fasterxml.jackson.databind.*;
 import es.timeforge.modelo.entidades.*;
+import es.timeforge.modelo.integraciones.ClienteJson;
 import es.timeforge.modelo.repositorio.Repositorio;
 import es.timeforge.modelo.servicios.*;
 import es.timeforge.modelo.DatosEntrada.*;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:timeforge_test;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.jpa.hibernate.ddl-auto=create-drop", "timeforge.gemini-key=", "timeforge.admin-user=",
-        "timeforge.admin-password=" })
+        "timeforge.admin-password=", "timeforge.rawg-key=clave-de-prueba" })
 @AutoConfigureMockMvc
 @Import(AplicacionIntegracionTest.TestTime.class)
 class AplicacionIntegracionTest {
@@ -53,6 +54,27 @@ class AplicacionIntegracionTest {
 
     @TestConfiguration
     static class TestTime {
+        @Bean
+        @Primary
+        ClienteJson catalogoSimulado(ObjectMapper json) {
+            return new ClienteJson(json) {
+                @Override
+                public JsonNode get(String url) throws Exception {
+                    return switch (url) {
+                    case "https://api.rawg.io/api/games?page_size=12&search=Hollow+Knight&key=clave-de-prueba" ->
+                        json.readTree("""
+                            {"results":[{"id":9767,"name":"Hollow Knight"}]}
+                            """);
+                    case "https://api.rawg.io/api/games/9767?key=clave-de-prueba" ->
+                        json.readTree("""
+                            {"name":"Hollow Knight","genres":[{"name":"Adventure"}],"playtime":27}
+                            """);
+                    default -> throw new AssertionError("Petición inesperada al catálogo de prueba");
+                    };
+                }
+            };
+        }
+
         @Bean
         @Primary
         MutableClock testClock() {
@@ -125,6 +147,25 @@ class AplicacionIntegracionTest {
 
     private JsonNode body(MvcResult result) throws Exception {
         return json.readTree(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    void buscarJuegoRawgYGuardarloEnLaBiblioteca() throws Exception {
+        var sesion = login(account());
+        var resultado = mvc.perform(get("/api/catalog/search").session(sesion)
+                .param("source", "RAWG").param("q", "Hollow Knight"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("Hollow Knight"))
+                .andReturn();
+        var juego = body(resultado).get(0);
+        String seleccion = json.writeValueAsString(Map.of("source", juego.get("source").asText(),
+                "externalId", juego.get("id").asLong()));
+        mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
+                .contentType("application/json").content(seleccion)).andExpect(status().isOk());
+        mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].work.title").value("Hollow Knight"))
+                .andExpect(jsonPath("$[0].work.source").value("RAWG"))
+                .andExpect(jsonPath("$[0].work.type").value("GAME"))
+                .andExpect(jsonPath("$[0].work.totalUnits").value(27));
     }
 
     @Test

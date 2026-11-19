@@ -96,6 +96,7 @@ document.addEventListener("click", async (event) => {
   if (action === "new-work") return formularioObra();
   if (action === "edit-progress") return formularioProgreso(id);
   if (action === "search-external") return buscarObrasExternas();
+  if (action === "search-rawg") return buscarJuegosRawg();
   if (action === "find-friend") return buscarAmigo();
   if (b.dataset.task) {
     if (busy) return;
@@ -307,11 +308,13 @@ document.addEventListener("submit", async (event) => {
         toast("¡Tu descanso ya está en marcha!");
         break;
       case "external-search": {
+        $("#modal-error").textContent = "";
+        $("#external-results").replaceChildren();
         const list = await api(
           "/catalog/search?source=" +
             encodeURIComponent(data.source) +
             "&q=" +
-            encodeURIComponent(data.q),
+            encodeURIComponent(data.q.trim()),
         );
         $("#external-results").innerHTML =
           list
