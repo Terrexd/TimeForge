@@ -1,0 +1,1349 @@
+ 
+6. Documento de Análisis y Diseño 
+ 
+ 
+ 
+Índice 
+ 
+Índice............................................................................................................................................ 1 
+6.1. Identificación del proyecto............................................................................................ 3 
+6.2. Descripción general....................................................................................................... 3 
+6.2.1. Descripción de la aplicación.................................................................................... 3 
+● Qué es...................................................................................................................... 3 
+● Para qué sirve...........................................................................................................3 
+● Quién la utilizará....................................................................................................... 3 
+● Qué problema pretende solucionar.......................................................................... 4 
+6.2.2. Problema o necesidad............................................................................................. 4 
+6.2.3. Objetivos..................................................................................................................4 
+● Objetivo general........................................................................................................4 
+● Objetivos específicos................................................................................................4 
+6.2.4. Usuarios objetivo..................................................................................................... 5 
+6.3. Alcance del proyecto......................................................................................................5 
+6.4. Requisitos funcionales.................................................................................................. 6 
+Módulo 1: Gestión de Usuarios y Autenticación.......................................................... 6 
+Módulo 2: Productividad, Tareas y Control de Tiempo................................................ 7 
+Módulo 3: Catálogo Multimedia y Backlog...................................................................8 
+Módulo 4: Economía de Ocio y Ruleta (Gacha).......................................................... 8 
+Módulo 5: Inteligencia Artificial (DAIA).........................................................................9 
+Módulo 6: Misiones, Logros y Funciones Online......................................................... 9 
+6.5. Requisitos no funcionales........................................................................................... 10 
+6.6. Reglas de negocio........................................................................................................ 11 
+6.7. Actores y casos de uso................................................................................................12 
+Actores del sistema....................................................................................................12 
+6.8. Especificación de casos de uso..................................................................................14 
+CU-04 - Ejecutar tarea con temporizador y liquidar recompensa....................................14 
+CU-07 - Canjear descanso en la ruleta (Gacha)..............................................................15 
+6.9. Casos límite y situaciones excepcionales................................................................. 16 
+1. Datos incorrectos, campos vacíos y valores fuera de rango................................. 16 
+2. Registros duplicados y recursos inexistentes........................................................ 17 
+3. Operaciones no permitidas y problemas de permisos...........................................17 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 1 
+ 
+4. Errores de conexión y caída de servicios externos............................................... 17 
+6.10. Modelo de datos......................................................................................................... 18 
+6.10.1. Entidades.............................................................................................................18 
+6.10.2. Atributos...............................................................................................................19 
+6.10.3. Relaciones........................................................................................................... 20 
+6.10.4. Cardinalidades.....................................................................................................22 
+6.10.5. Diagrama entidad-relación...................................................................................25 
+6.10.6. Esquema relacional inicial................................................................................... 25 
+6.11. Arquitectura de la aplicación.....................................................................................26 
+Comunicación entre componentes............................................................................ 28 
+Justificación de la estructura elegida......................................................................... 28 
+6.12. Diseño inicial de clases............................................................................................. 29 
+6.13. Diseño de la interfaz...................................................................................................29 
+6.14. Tecnologías propuestas.............................................................................................30 
+6.15. Registro del uso de inteligencia artificial.................................................................32 
+6.16. Evaluación crítica del uso de IA................................................................................34 
+6.16.1. ¿En qué tareas te ha resultado útil la IA?............................................................34 
+6.16.2. ¿Qué propuestas de la IA has rechazado?......................................................... 34 
+6.16.3. ¿Has detectado algún error o propuesta inadecuada?........................................34 
+6.16.4. ¿Qué decisiones has tomado tú directamente?.................................................. 34 
+6.16.5. ¿Ha cambiado el diseño inicial de tu proyecto como consecuencia de utilizar IA?.
+35 
+ 
+ 
+ 
+ 
+6.1. Identificación del proyecto 
+● Nombre del proyecto: TimeForge 
+ 
+● Autor : Javier Valencia Miranda 
+ 
+● Descripción breve de la aplicación:  
+Software de gestión de la productividad personal, donde el usuario registra y completa sus tareas para 
+obtener monedas virtuales según su puntualidad. Este saldo se utiliza para desbloquear descansos 
+temporizados, en los cuales un sistema de selección ponderada asistido por IA elige automáticamente 
+qué videojuego, lectura o serie pendiente disfrutar durante ese intervalo de tiempo. 
+ 
+● Versión y Fecha del documento: 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 2 
+ 
+v 1.0 | 05/10/2026 
+6.2. Descripción general  
+6.2.1. Descripción de la aplicación  
+● Qué es  
+Una aplicación de gestión de tiempo, productividad personal y administración de ocio digital. 
+Combina un planificador de tareas con seguimiento y un catálogo de obras pendientes de 
+consumir 
+ 
+● Para qué sirve  
+Sirve para organizar tareas como obligaciones y regula los tiempos de descanso mediante un 
+incentivo: 
+​
+​ 1. El usuario registra la tarea con un tiempo estimado 
+2. Si completas la tarea dentro del plazo el sistema te otorga monedas virtuales en 
+función de la eficiencia y puntualidad 
+3. Las monedas virtuales se canjean para desbloquear periodos de descanso 
+temporizados 
+4. Durante el descanso una selección (ruleta) asistida por IA elige que obra del 
+catálogo pendiente es la óptima para consumir  
+ 
+● Quién la utilizará  
+Usuarios que quieran compaginar las responsabilidades diarias con ocio digital y no saben 
+gestionar su tiempo 
+ 
+● Qué problema pretende solucionar  
+La procrastinación, la falta de foco y la parálisis por elección, por que evita que el usuario 
+pierda tiempo decidiendo que jugar, leer o ver cuando tiene un descanso breve, y transforma 
+el terminar la tarea en un proceso al asociar el esfuerzo con una recompensa tangible y 
+delimitada del tiempo 
+6.2.2. Problema o necesidad  
+Pretende resolver la procrastinación a la hora de estudiar o hacer tareas y la pérdida de 
+tiempo decidiendo qué jugar, leer o ver cuando por fin tienes un rato libre. 
+Ya que hoy en dia puedes acumular listas enormes de pendientes (Juegos, mangas, series, 
+animes, películas) y cuando tienes un descanso muchas veces pasas más tiempo buscando sin 
+saber qué elegir que disfrutando del descanso. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 3 
+ 
+6.2.3. Objetivos  
+● Objetivo general  
+Gestionar el tiempo combinando el gestor de tareas con el catálogo de ocio pendiente. El 
+objetivo principal es motivar al usuario a terminar sus obligaciones a tiempo mediante un 
+sistema de recompensas 
+ 
+● Objetivos específicos  
+ 
+Controlar el tiempo real de las tareas: Crear un sistema con temporizador que mide cuánto 
+tardas en hacer una tarea frente a lo que calculaste en un principio, dando la recompensa 
+completa en monedas si cumples el plazo o reduciéndote si te retrasas. 
+ 
+Gestionar el catálogo de pendientes (backlog): Diseñar una base de datos organizada donde el 
+usuario pueda guardar y llevar al día sus videojuegos (horas, plataformas), mangas/cómics 
+(tomos, capítulos) y series/animes (episodios). 
+ 
+Crear la ruleta de descansos (gacha): Programar el algoritmo que toma las monedas ganadas 
+y elige al azar, pero con cabeza, qué obra consumir según el tiempo exacto que dure el 
+descanso (pausa corta de 15 minutos vs. sesión más larga). 
+ 
+Integrar Inteligencia Artificial: Usar IA para dos cosas clave: 
+ 
+Explicar y justificar de forma entretenida por qué te recomienda esa obra concreta 
+según el esfuerzo que acabas de hacer. 
+ 
+Analizar la información y sinopsis de las obras para clasificarlas automáticamente 
+por ritmo y temática. 
+ 
+Bloquear el ocio sin saldo: Asegurar mediante reglas de negocio que nadie pueda activar 
+descansos o tiradas en la ruleta si no ha completado antes sus tareas y conseguido monedas. 
+ 
+Misiones y funciones online: Añadir retos semanales automáticos para avanzar en obras que 
+lleven tiempo paradas y permitir funciones en red, como hacer tiradas conjuntas con amigos 
+para decidir a qué jugar o qué leer juntos. 
+ 
+6.2.4. Usuarios objetivo  
+​ Usuario estándar (Estudiante / Opositor / Trabajador) : 
+​ Usuario principal. Es una persona que suele acumular tareas diarias y que a su vez tiene una 
+lista larga de videojuegos, series o libros pendientes que nunca sabe cuando o como avanzar. Utiliza la 
+herramienta para organizar sus tareas y cronometrar, como para gestionar su lista de pendientes, gastar 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 4 
+ 
+sus monedas en la ruleta de descansos y usar las funciones online con sus amigos. 
+Root / Administrador del sistema: 
+Perfil con permisos avanzados para el mantenimiento de la app. Se encarga de supervisar la base de 
+datos, gestionar las cuentas de usuarios si hay incidencias y controlar el uso y consumo de las llamada 
+de API de IA para que la app sea estable 
+ 
+ 
+ 
+6.3. Alcance del proyecto  
+Define qué estará incluido inicialmente en el proyecto y qué quedará fuera.  
+Debes diferenciar entre:  
+Dentro del alcance: Funcionalidades que está previsto implementar.  
+Gestión de tareas y control de tiempo:  
+-​ Creación, edición y borrado de tareas  
+-​ Temporizador activo  
+-​ Algoritmo de recompensas. 
+Gestión de backlog multimedia: 
+-​ Catálogo personal para añadir y gestionar videojuegos, mangas/cómics y series/animes  
+-​ El control del estado de cada obra (Pendiente, En curso, En Pausa, Completado). 
+Economía de ocio y ruleta:  
+-​ Cartera o monedero virtual donde se acumulan las monedas ganadas con el esfuerzo. 
+-​ Sistema de tiradas/ruleta donde gastar monedas para desbloquear pausas de tiempo 
+acotado 
+-​ Algoritmo de selección ponderada que descarta obras que no encajen en el tiempo ganado 
+-​ Bloqueo de descansos si el usuario no tiene saldo de monedas disponible 
+​ Integración con Inteligencia Artificial (DAIA): 
+-​ “El Oráculo”: generación de textos breves que justifican por qué te ha tocado esa obra 
+concreta según la tarea  que acabas de terminar. 
+-​ Clasificación automática de etiquetas temáticas y ritmo a partir de la sinopsis de la obra 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 5 
+ 
+​ Módulo social y misiones: 
+-​ Sistema básico de amigos para comparar progresos y logros. 
+-​ Tirada cooperativa: cruza los catálogos de dos amigos para elegir qué jugar o leer juntos. 
+-​ Generador de misiones semanales dinámicas (ej. avanzar en obras que lleven tiempo 
+pausadas) para conseguir monedas extra. 
+ 
+​ Persistencia y cuentas: 
+-​ Registro, inicio de sesión seguro y almacenamiento de datos en base de datos relacional.  
+Fuera del alcance: Funcionalidades que podrían resultar interesantes, pero que no forman 
+parte de la versión inicial.  
+Bloqueador a nivel de sistema operativo (Se basará en avisos y notificaciones) 
+Escaneo por cámara y OCR. 
+Pagos con dinero real o compras dentro de la app  
+Modo chat en tiempo real integrado  (Aunque hay funciones cooperativas y de amigos, no se 
+desarrollará un sistema de mensajería instantánea dentro de la app para no desviar el foco principal de 
+la herramienta.) 
+6.4. Requisitos funcionales  
+Módulo 1: Gestión de Usuarios y Autenticación 
+●​ RF-01 — Registrar usuario​
+El sistema permitirá registrar una nueva cuenta de usuario indicando un nombre de usuario único, 
+correo electrónico y contraseña. 
+●​ RF-02 — Iniciar y cerrar sesión​
+El sistema permitirá a los usuarios identificarse con sus credenciales para acceder a sus datos 
+personales y cerrar su sesión activa de forma segura. 
+●​ RF-03 — Gestionar perfil de usuario​
+El sistema permitirá modificar los datos básicos del perfil (nombre para mostrar, avatar y 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 6 
+ 
+descripción personal). 
+Módulo 2: Productividad, Tareas y Control de Tiempo 
+●​ RF-04 — Crear y gestionar tareas​
+El sistema permitirá dar de alta, modificar y eliminar tareas, asignándoles título, descripción 
+opcional, categoría (estudio, trabajo, personal), nivel de prioridad y una estimación de tiempo en 
+minutos. 
+●​ RF-05 — Controlar tiempo de ejecución con temporizador​
+El sistema dispondrá de un temporizador integrado que permitirá iniciar, pausar y marcar como 
+finalizada una tarea, computando el tiempo real invertido. 
+●​ RF-06 — Liquidar recompensa por eficiencia temporal​
+El sistema calculará automáticamente la recompensa base a razón de 2 monedas virtuales por 
+cada minuto estimado de la tarea. Si la tarea se finaliza dentro del plazo estimado (o antes), 
+asignará el 100% de la recompensa. Si el tiempo real supera al previsto, aplicará una reducción 
+progresiva garantizando siempre un suelo mínimo del 20%. Para tareas completadas 
+manualmente sin pasar por el cronómetro o con una duración real inferior a 5 minutos, la 
+recompensa será de 0 monedas.  
+●​ RF-07 — Consultar historial de tareas y métricas​
+El sistema permitirá revisar el listado de tareas completadas junto con las métricas de desviación 
+temporal (tiempo estimado frente a tiempo real). 
+Módulo 3: Catálogo Multimedia y Backlog 
+●​ RF-08 — Registrar obras en el catálogo personal​
+El sistema permitirá dar de alta videojuegos, mangas/cómics y series/animes indicando título, tipo 
+de obra, géneros y sinopsis. 
+●​ RF-09 — Gestionar progreso segmentado​
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 7 
+ 
+El sistema permitirá registrar y actualizar el progreso concreto de cada obra según su naturaleza: 
+horas y plataformas en videojuegos; tomos y capítulos en lecturas; temporadas y episodios en 
+series/animes. 
+●​ RF-10 — Controlar estados de las obras​
+El sistema permitirá asignar y cambiar el estado de cualquier título del catálogo entre: Pendiente, 
+En curso, En pausa y Completado. 
+●​ RF-11 — Filtrar y buscar en el backlog​
+El sistema permitirá buscar y sincronizar títulos de videojuegos, manga y anime consumiendo 
+APIs externas de catálogo (RAWG y Jikan), persistiendo los datos básicos y portadas localmente 
+para agilizar la gestión del backlog.  
+Módulo 4: Economía de Ocio y Ruleta (Gacha) 
+●​ RF-12 — Consultar balance de la billetera virtual​
+El sistema mostrará en todo momento el saldo de monedas acumuladas obtenidas mediante el 
+cumplimiento de tareas y misiones. 
+●​ RF-13 — Canjear monedas por pausas de descanso​
+El sistema permitirá gastar monedas para desbloquear descansos temporizados estructurados en 
+tres modalidades fijas e inmutables: Pausa corta (15 min - 80 monedas), Pausa media (30 min - 
+150 monedas) y Pausa extendida (60 min - 280 monedas).  
+●​ RF-14 — Seleccionar obra mediante ruleta ponderada​
+Al canjear un descanso, el sistema elegirá de forma aleatoria ponderada una obra del catálogo del 
+usuario cuyo formato encaje en el tiempo del descanso adquirido, priorizando aquellas con mayor 
+tiempo de inactividad o próximas a terminarse. 
+●​ RF-15 — Bloquear descansos por saldo insuficiente​
+El sistema impedirá activar tiradas en la ruleta o iniciar sesiones de descanso asistidas si el 
+usuario no cuenta con las monedas necesarias. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 8 
+ 
+●​ RF-16 — Temporizar la sesión de descanso​
+El sistema activará una cuenta atrás durante el descanso y emitirá un aviso visual o sonoro cuando 
+la pausa haya finalizado. 
+Módulo 5: Inteligencia Artificial (DAIA) 
+●​ RF-17 — Generar justificación contextual del descanso ("El Oráculo")​
+El sistema generará un texto explicativo breve al salir la tirada de la ruleta, motivando la 
+recomendación en función de la tarea que el usuario acaba de finalizar y la duración del descanso. 
+●​ RF-18 — Clasificar automáticamente etiquetas y ritmo​
+El sistema analizará mediante inteligencia artificial la sinopsis de una obra para inferir y sugerir 
+etiquetas de temática y densidad/ritmo narrativo sin que el usuario deba introducirlas 
+manualmente. 
+Módulo 6: Misiones, Logros y Funciones Online 
+●​ RF-19 — Generar misiones dinámicas periódicas​
+El sistema generará semanalmente retos automáticos basados en el catálogo del usuario (por 
+ejemplo, avanzar cierta cantidad de capítulos o retomar un título pausado) para otorgar 
+bonificaciones de monedas al cumplirlos. 
+●​ RF-20 — Desbloquear logros del sistema​
+El sistema evaluará de forma automática el cumplimiento de hitos (constancia de estudio, 
+finalización de sagas completas, rachas de puntualidad) y desbloqueará insignias en el perfil. 
+●​ RF-21 — Gestionar lista de amigos​
+El sistema permitirá buscar otros usuarios, enviar y aceptar solicitudes de amistad y consultar 
+perfiles públicos de contactos. 
+●​ RF-22 — Ejecutar tirada cooperativa​
+El sistema permitirá a dos usuarios amigos iniciar una tirada compartida que calcule la 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 9 
+ 
+intersección de sus catálogos pendientes y elija una obra común para jugar o ver juntos. 
+●​ RF-23 — Administrar usuarios y cuentas  
+El sistema permitirá a perfiles con rol Administrador suspender, reactivar o dar de baja cuentas de 
+usuario ante comportamientos anómalos o incidencias técnicas.  
+●​ RF-24 — Monitorizar consumo y rendimiento de IA  
+El sistema registrará internamente el volumen de peticiones enviadas al servicio de Inteligencia 
+Artificial, sus tiempos de respuesta y los errores generados para controlar cuotas y costes 
+operativos.  
+ 
+6.5. Requisitos no funcionales  
+RNF-01 — Seguridad (Protección de contraseñas)​
+Las contraseñas de los usuarios se guardarán siempre cifradas mediante algoritmos de hash (como 
+BCrypt), nunca en texto plano.​
+Justificación: Imprescindible para proteger la privacidad de las cuentas de usuario ante posibles 
+filtraciones de la base de datos. 
+RNF-02 — Rendimiento (Respuesta rápida de la ruleta y catálogo)  
+La ruleta de selección ponderada y las búsquedas en el catálogo local responderán en menos de 1,5 
+segundos. La justificación textual del Oráculo (IA) cargará de manera asíncrona para no demorar la 
+entrega de la obra seleccionada. Justificación: Garantiza inmediatez al usuario al solicitar una pausa 
+sin retener la interfaz mientras el modelo de lenguaje procesa el texto.  
+RNF-03 — Disponibilidad (Tolerancia a fallos de la IA)  
+Si la conexión con la API de Inteligencia Artificial supera el tiempo límite de 5 segundos (timeout) 
+o devuelve un error, la aplicación asignará el descanso de inmediato mostrando un mensaje genérico 
+predeterminado en el frontend. Justificación: Evita que la caída de un servicio externo interrumpa la 
+experiencia principal del usuario.  
+RNF-04 — Usabilidad (Facilidad y rapidez de uso)​
+La interfaz será clara e intuitiva, permitiendo iniciar el temporizador de una tarea o consultar el 
+saldo de monedas con un máximo de dos clics desde la pantalla principal.​
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 10 
+ 
+Justificación: Una app de productividad debe ser ágil para que no dé pereza usarla en el día a día. 
+RNF-05 — Integridad (Transacciones seguras de monedas)​
+El cobro y la entrega de monedas se gestionarán de forma atómica en la base de datos para asegurar 
+que el saldo no se duplique ni se pierda.​
+Justificación: Evita errores en la billetera virtual al ganar o gastar monedas de descanso. 
+RNF-06 — Compatibilidad (Arquitectura Desktop-First)  
+La aplicación web estará diseñada y optimizada con un enfoque prioritario para ordenadores de 
+escritorio (Desktop-first), garantizando una visualización uniforme en navegadores web modernos 
+bajo entornos Windows, Linux y macOS. Justificación: Asegura la compatibilidad multiplataforma 
+exigida en el ciclo formativo sin requerir compilaciones nativas dependientes del sistema operativo.  
+RNF-07 — Mantenibilidad (Código ordenado por capas)​
+El proyecto se programará separando claramente la vista (interfaz), la lógica de negocio y el acceso 
+a la base de datos.​
+Justificación: Facilita encontrar fallos, hacer pruebas y añadir mejoras a futuro sin tener que 
+reescribir todo el código. 
+ 
+ 
+6.6. Reglas de negocio  
+RN-01 — Bloqueo de descansos sin saldo:​
+Un usuario no podrá realizar tiradas en la ruleta ni iniciar sesiones de descanso asistidas si su saldo de 
+monedas virtuales es inferior al coste de la pausa seleccionada. 
+RN-02 — Liquidación de monedas y control antiabuso: 
+La recompensa base se calcula como: Monedas Base = Minutos Estimados × 2. Si la tarea se completa 
+dentro del tiempo estimado, se cobra el 100%. Si hay demora, se aplicará una penalización del 2% por 
+cada 5% de tiempo excedido, con un suelo mínimo del 20%. Para evitar abusos, las tareas con una 
+duración real inferior a 5 minutos o marcadas como completadas manualmente sin activar el cronómetro 
+otorgarán 0 monedas. El límite máximo acumulable por usuario mediante tareas es de 1.500 monedas 
+diarias.  
+RN-03 — Exclusividad de sesión de trabajo:​
+Un usuario no podrá tener dos temporizadores de tareas activos simultáneamente; deberá pausar o 
+finalizar la tarea en curso antes de iniciar otra. 
+RN-04 — Incompatibilidad entre trabajo y descanso:​
+Mientras un temporizador de descanso esté en marcha, el usuario no podrá iniciar el cronómetro de una 
+tarea productiva hasta que agote el tiempo de la pausa o decida cancelarla expresamente. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 11 
+ 
+RN-05 — Filtro de catálogo por duración de descanso:​
+La ruleta no podrá seleccionar una obra cuyo formato o duración media estimada supere el tiempo de 
+descanso canjeado (por ejemplo, una sesión corta de 15 minutos no podrá asignar un capítulo de serie de 
+45 minutos). 
+RN-06 — Requisito de catálogo común en tirada cooperativa:​
+Para iniciar una tirada conjunta entre dos usuarios amigos, ambos deben tener en común al menos una 
+obra en estado Pendiente o En curso; de lo contrario, el sistema no permitirá ejecutar la tirada. 
+RN-07 — No retroactividad en misiones expiradas:​
+Las misiones dinámicas no completadas caducarán al cierre del ciclo semanal (domingos a las 23:59) y no 
+podrán volver a completarse ni reclamarse una vez vencido dicho plazo. 
+RN-08 — Inmutabilidad de los costes de descanso: Los costes en monedas y la duración de las pausas 
+en la ruleta son parámetros globales fijos establecidos por el sistema (80 monedas / 15 min; 150 monedas 
+/ 30 min; 280 monedas / 60 min) y no pueden ser modificados por el usuario desde la configuración.  
+RN-09 — Compatibilidad de obras con pausas de ocio: En series y anime, una obra es compatible con 
+una pausa si la duración media de su episodio es igual o inferior al tiempo del descanso. En videojuegos, 
+solo se seleccionarán títulos aptos para sesiones cortas (clasificados como partidas rápidas o arcades) para 
+pausas de 15 o 30 minutos, reservando sesiones de 60 minutos para juegos de progresión narrativa.  
+6.7. Actores y casos de uso  
+Actores del sistema 
+●​ Usuario: Persona registrada que interactúa con la aplicación para gestionar sus tareas 
+con temporizador, administrar su catálogo de pendientes (backlog), gastar monedas en 
+la ruleta de descansos y usar las funciones sociales. 
+●​ Administrador: Usuario con privilegios de gestión técnica encargado de la supervisión 
+de cuentas, mantenimiento de la persistencia y monitorización de las peticiones a la API 
+de Inteligencia Artificial. 
+●​ Servicio de IA (Actor secundario / externo): Sistema externo que procesa las 
+peticiones de justificación contextual ("El Oráculo") y el etiquetado inteligente a partir de 
+sinopsis. 
+Tabla de casos de uso principales 
+ 
+ID Caso de uso Actor Descripción 
+CU-01 Registrar usuario Usuario Permite crear una nueva cuenta 
+en el sistema introduciendo 
+credenciales y datos básicos. 
+CU-02 Iniciar sesión Usuario, 
+Administrador 
+Permite autenticarse en la 
+aplicación para acceder a las 
+funciones y datos personales. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 12 
+ 
+CU-03 Gestionar tareas Usuario Permite dar de alta, editar, 
+consultar y eliminar tareas 
+asignando tiempos estimados y 
+prioridades. 
+CU-04 Ejecutar tarea 
+con temporizador 
+Usuario Permite iniciar, pausar y 
+cronometrar el tiempo real 
+dedicado a una tarea activa. 
+CU-05 Liquidar 
+recompensa de 
+tarea 
+Sistema 
+(asociado a 
+Usuario) 
+Calcula y acredita las monedas 
+ganadas al completar la tarea 
+en función de la puntualidad 
+demostrada. 
+CU-06 Gestionar 
+catálogo de 
+backlog 
+Usuario Permite añadir obras (juegos, 
+mangas, series) y actualizar su 
+progreso específico (capítulos, 
+horas). 
+CU-07 Canjear 
+descanso en la 
+ruleta (Gacha) 
+Usuario Permite gastar monedas para 
+que el sistema elija 
+aleatoriamente una obra que 
+encaje en el tiempo de 
+descanso ganado. 
+CU-08 Solicitar 
+recomendación a 
+la IA 
+Usuario, Servicio 
+de IA 
+Genera una justificación 
+contextual personalizada sobre 
+la obra seleccionada para la 
+pausa. 
+CU-09 Ejecutar tirada 
+cooperativa 
+Usuario Permite a dos usuarios amigos 
+realizar una tirada conjunta 
+sobre las obras que tienen en 
+común. 
+CU-10 Reclamar 
+recompensas de 
+misiones 
+Usuario Permite canjear bonificaciones 
+de monedas al cumplir los retos 
+semanales generados 
+automáticamente. 
+CU-11 Gestionar 
+usuarios y 
+cuentas 
+Administrador Permite dar de baja, bloquear o 
+restablecer cuentas de usuario 
+en el sistema. 
+CU-12 Consultar 
+métricas y 
+consumo de IA 
+Administrador Permite monitorizar el volumen 
+de peticiones y el estado del 
+servicio de Inteligencia Artificial. 
+ 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 13 
+ 
+6.8. Especificación de casos de uso  
+CU-04 - Ejecutar tarea con temporizador y liquidar recompensa 
+Actor o actores: Usuario 
+Objetivo: Permitir al usuario medir el tiempo real empleado en una tarea y calcular 
+automáticamente la entrega de monedas virtuales en función de la puntualidad demostrada. 
+Precondiciones: 
+●​ El usuario debe haber iniciado sesión. 
+●​ Debe existir al menos una tarea registrada en estado Pendiente. 
+●​ No debe haber otro temporizador de tarea activo ni una sesión de descanso en curso. 
+Flujo principal: 
+1.​ 1. El usuario accede a la sección de descansos/ruleta. 
+2.​ 2. El sistema muestra el saldo disponible y las modalidades fijas de descanso (15 min / 
+80 monedas, 30 min / 150 monedas, 60 min / 280 monedas). 
+3.​ 3. El usuario selecciona la modalidad deseada y solicita la tirada. 
+4.​ 4. El sistema valida que el saldo de la billetera sea igual o superior al coste y comprueba 
+que existen obras en el catálogo compatibles con esa duración. 
+5.​ 5. El sistema ejecuta el descuento de monedas de forma atómica en la base de datos 
+(RNF-05) y selecciona la obra mediante el algoritmo ponderado. 
+6.​ 6. El sistema muestra de inmediato la obra seleccionada en pantalla e inicia la cuenta 
+atrás regresiva. 
+7.​ 7. De forma paralela y asíncrona, el sistema invoca al Oráculo de IA (CU-08) para 
+generar la justificación contextual; al recibir respuesta, la incrusta en la tarjeta de 
+descanso. 
+8.​ 8. Al agotarse el temporizador, el sistema emite un aviso sonoro/visual de finalización. 
+Flujos alternativos: 
+●​ FA-01: El usuario pausa el temporizador de la tarea de forma momentánea. El sistema 
+congela el recuento y permite reanudarlo cuando el usuario lo indique. 
+●​ FA-02: El usuario decide cancelar la tarea en curso. El sistema descarta la sesión de 
+tiempo actual y no liquida ninguna moneda. 
+Excepciones: 
+●​ E-01: Si el usuario intenta iniciar un temporizador teniendo ya otro en marcha, el 
+sistema le notifica que debe pausar o finalizar la tarea previa. 
+●​ E-02: Si ocurre un fallo de conexión al guardar el resultado en la base de datos, el 
+sistema guarda el tiempo localmente y reintenta la liquidación de monedas cuando 
+vuelva la red. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 14 
+ 
+Postcondiciones: 
+●​ La tarea queda marcada como completada en el historial. 
+●​ El saldo de monedas del usuario queda actualizado. 
+●​ Quedan almacenadas las métricas de desviación temporal para futuras estadísticas. 
+ 
+CU-07 - Canjear descanso en la ruleta (Gacha) 
+Actor o actores: Usuario 
+Objetivo: Permitir al usuario consumir monedas virtuales para desbloquear una pausa temporal 
+y obtener una obra del backlog seleccionada de forma ponderada. 
+Precondiciones: 
+●​ El usuario debe haber iniciado sesión. 
+●​ El usuario debe disponer de saldo de monedas suficiente en su billetera virtual. 
+●​ Debe existir al menos una obra en el catálogo de pendientes en estado Pendiente o En 
+curso. 
+Flujo principal: 
+1.​ El usuario accede a la sección de descansos/ruleta. 
+2.​ El sistema muestra el saldo disponible y las modalidades de descanso (ej. descanso 
+corto de 15 minutos o descanso largo de 45 minutos). 
+3.​ El usuario selecciona el tipo de descanso y confirma el gasto de monedas. 
+4.​ El sistema deduce el coste en monedas de la cuenta del usuario. 
+5.​ El sistema filtra las obras del catálogo que encajen en el tiempo del descanso y ejecuta 
+la selección ponderada. 
+6.​ El sistema muestra en pantalla la obra seleccionada (portada, título y avance actual). 
+7.​ El sistema inicia la cuenta atrás regresiva del descanso. 
+8.​ Al agotarse el temporizador, el sistema emite un aviso de fin de descanso. 
+Flujos alternativos: 
+●​ FA-01: El usuario decide terminar el descanso antes de agotar el cronómetro. El 
+sistema detiene la cuenta atrás y vuelve al panel de tareas, sin devolver las monedas 
+gastadas. 
+Excepciones: 
+●​ E-01: Si el usuario no tiene saldo suficiente de monedas, el sistema impide el acceso a 
+la tirada e indica que debe completar tareas pendientes para ganar saldo. 
+●​ E-02: Si no existen obras en el catálogo compatibles con la duración de la pausa 
+seleccionada, el sistema avisa al usuario para que añada títulos a su backlog y cancela 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 15 
+ 
+el cobro de monedas. 
+Postcondiciones: 
+●​ El saldo de la billetera virtual del usuario se reduce en la cantidad cobrada. 
+●​ La sesión de descanso queda registrada en el historial del usuario. 
+ 
+6.9. Casos límite y situaciones excepcionales  
+1. Datos incorrectos, campos vacíos y valores fuera de rango 
+●​ Tiempos negativos o nulos al registrar tareas: 
+○​ Situación: El usuario intenta crear una tarea asignándole un tiempo estimado de 0 o 
+valores negativos (ej. -15 minutos). 
+○​ Tratamiento del sistema: Se activa la validación en cliente y servidor, bloqueando el 
+guardado y mostrando el aviso: "El tiempo estimado debe ser un número entero mayor 
+que cero". 
+●​ Campos vacíos o incompletos: 
+○​ Situación: Se intenta enviar un formulario de registro sin contraseña o dar de alta una 
+obra sin seleccionar su tipo de medio (juego, manga o serie). 
+○​ Tratamiento del sistema: Se resalta el campo afectado en rojo con el mensaje "Este 
+campo es obligatorio" y se deshabilita el botón de confirmación hasta rellenarlo. 
+●​ Valores fuera de rango en progreso multimedia: 
+○​ Situación: El usuario introduce que ha leído el capítulo 50 en un manga que tiene un total 
+de 30 capítulos registrados. 
+○​ Tratamiento del sistema: El sistema detecta la incongruencia, no actualiza el registro y 
+muestra la advertencia: "El capítulo actual no puede superar el total de capítulos de la 
+obra". 
+2. Registros duplicados y recursos inexistentes 
+●​ Nombre de usuario o correo repetido en el registro: 
+○​ Situación: Un usuario intenta registrarse utilizando un correo electrónico o nombre de 
+usuario que ya consta en la base de datos. 
+○​ Tratamiento del sistema: La base de datos rechaza la inserción por restricción de unicidad 
+y la interfaz notifica: "El correo electrónico o nombre de usuario ya está en uso". 
+●​ Obra duplicada en el backlog personal: 
+○​ Situación: El usuario intenta añadir a su catálogo un título con el mismo nombre y 
+formato que ya tiene registrado. 
+○​ Tratamiento del sistema: El sistema avisa: "Esta obra ya existe en tu catálogo. Puedes 
+editar su estado o progreso desde tu lista". 
+●​ Consulta de recursos borrados o inexistentes: 
+○​ Situación: Se intenta acceder a una tarea o ficha de catálogo que fue eliminada 
+previamente desde otra pestaña o dispositivo. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 16 
+ 
+○​ Tratamiento del sistema: Se captura la excepción, impidiendo cierres inesperados, y se 
+muestra un mensaje informativo: "El elemento seleccionado ya no está disponible", 
+redirigiendo a la vista principal. 
+3. Operaciones no permitidas y problemas de permisos 
+●​ Intento de tirada en la ruleta sin monedas suficientes: 
+○​ Situación: El usuario solicita un descanso de 45 minutos que cuesta 3 monedas teniendo 
+un saldo de 1 o 0 monedas. 
+○​ Tratamiento del sistema: El botón de tirada permanece bloqueado y, en caso de forzarse 
+la petición, el servidor devuelve un error de validación indicando: "Saldo insuficiente. 
+Completa tareas para ganar más monedas". 
+●​ Ejecución simultánea de cronómetros: 
+○​ Situación: El usuario intenta iniciar el temporizador de una segunda tarea mientras ya 
+tiene una en marcha, o intenta arrancar una tarea durante un descanso activo. 
+○​ Tratamiento del sistema: El sistema impide la acción y muestra un modal: "Ya tienes una 
+sesión activa. Debes finalizarla o pausarla antes de iniciar una nueva". 
+●​ Acceso a funciones administrativas sin privilegios: 
+○​ Situación: Un usuario general intenta acceder a las vistas de monitorización del servidor 
+o de la IA manipulando rutas o llamadas. 
+○​ Tratamiento del sistema: El filtro de seguridad deniega la petición devolviendo un error 
+403 Forbidden y redirige a la pantalla de inicio del usuario. 
+4. Errores de conexión y caída de servicios externos 
+●​ Caída o desconexión de la base de datos durante una tarea: 
+○​ Situación: El usuario finaliza una tarea de estudio, pero se pierde la conexión de red al 
+intentar registrar las monedas en el servidor. 
+○​ Tratamiento del sistema: El cliente guarda temporalmente el resultado de la tarea en 
+almacenamiento local (Local Storage / base de datos local SQLite) y muestra: "Conexión 
+perdida. Los datos se guardarán y sincronizarán automáticamente al reconectar". 
+●​ Fallo o lentitud extrema en la API de Inteligencia Artificial: 
+○​ Situación: El servicio de IA supera el tiempo límite de 5 segundos (timeout) o devuelve 
+un error 500 tras una tirada de descanso. 
+○​ Tratamiento del sistema: Se activa el mecanismo de respaldo (fallback): la aplicación no 
+interrumpe el descanso y muestra un mensaje genérico del sistema en lugar del texto del 
+Oráculo (ej. "¡Gran trabajo! Tómate este descanso bien merecido"), garantizando la 
+continuidad de la experiencia. 
+ 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 17 
+ 
+6.10. Modelo de datos  
+6.10.1. Entidades  
+Usuario (Usuario):​
+Representa a las personas registradas en la plataforma. Almacena sus datos de acceso, 
+perfil, rol en el sistema (usuario estándar o administrador) y configuración general. 
+Billetera / Saldo (Billetera):​
+Registra el balance actual de monedas virtuales acumuladas por el usuario, asociando su 
+cuenta con el historial de saldo disponible para canjear en descansos. 
+Tarea (Tarea):​
+Contiene las obligaciones o actividades planificadas por el usuario. Almacena su título, 
+categoría, prioridad, tiempo estimado, tiempo real invertido, estado (Pendiente, En 
+curso, Completada) y las monedas generadas tras completarla. 
+ObraMultimedia (ObraMultimedia):​
+Representa los títulos del catálogo de ocio pendientes o consumidos (videojuegos, 
+mangas o series). Almacena información descriptiva como título, tipo de medio, 
+sinopsis, géneros y etiquetas inferidas por la IA. 
+ProgresoObra (ProgresoObra):​
+Vincula una obra concreta con un usuario específico. Registra el estado actual de la obra 
+en su catálogo (Pendiente, En curso, En pausa, Completado) y sus métricas particulares 
+de avance (horas jugadas, capítulos leídos o episodios vistos). 
+SesionDescanso (SesionDescanso):​
+Almacena el registro histórico de cada descanso desbloqueado. Contiene la duración de 
+la pausa, el coste en monedas deducido, la obra seleccionada por la ruleta y la 
+fecha/hora en la que se realizó. 
+RecomendacionIA (RecomendacionIA):​
+Guarda las respuestas generadas por el "Oráculo" de Inteligencia Artificial para cada 
+descanso, asociando el texto explicativo con la tarea previa y la obra asignada. 
+Mision (Mision):​
+Define los retos periódicos disponibles en el sistema (por ejemplo, retomar una obra 
+pausada o mantener una racha de puntualidad), especificando la descripción del 
+objetivo, la recompensa en monedas y la fecha de expiración semanal. 
+Amistad (Amistad):​
+Representa los vínculos entre usuarios en la plataforma. Almacena las solicitudes, su 
+estado (Pendiente, Aceptada, Rechazada) y permite habilitar funcionalidades conjuntas 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 18 
+ 
+como las tiradas cooperativas. 
+6.10.2. Atributos  
+ 
+Entidad Clave 
+Primaria (PK) 
+Claves 
+Foráneas (FK) 
+Atributos Principales 
+Usuario id_usuario — username, email, password_hash, 
+rol, fecha_registro 
+Billetera id_billetera id_usuario saldo_monedas, ultima_actualizacion 
+MovimientoBil
+letera  
+id_movimiento  id_billetera  tipo (INGRESO/GASTO), concepto 
+(TAREA, RULETA, MISION), 
+cantidad, fecha_hora  
+Tarea id_tarea id_usuario titulo, categoria, prioridad, 
+tiempo_estimado, tiempo_real, 
+recompensa_estimada, estado, 
+monedas_obtenidas, fecha_creacion  
+ObraMultimedi
+a 
+id_obra — id_externo_api, titulo, tipo_medio, 
+sinopsis, genero, unidad_total, 
+duracion_media_unidad  
+ProgresoObra id_progreso id_usuario, 
+id_obra 
+estado, unidad_actual, unidad_total, 
+plataforma, ultima_interaccion 
+SesionDescan
+so 
+id_descanso id_usuario, 
+id_obra 
+duracion_minutos, coste_monedas, 
+fecha_inicio, completado 
+Recomendaci
+onIA 
+id_recomenda
+cion 
+id_descanso, 
+id_tarea 
+texto_justificacion, fecha_generacion 
+Mision id_mision id_usuario descripcion, recompensa_monedas, 
+progreso_actual, objetivo_total, 
+completada, fecha_limte 
+ 
+Amistad id_amistad id_usuario1, 
+id_usuario2 
+estado, fecha_solicitud 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 19 
+ 
+ 
+6.10.3. Relaciones  
+Usuario — Billetera (1:1):​
+Cada usuario posee una única billetera virtual para gestionar sus monedas, y cada billetera 
+pertenece exclusivamente a un usuario. 
+Usuario — Tarea (1:N):​
+Un usuario puede crear y gestionar múltiples tareas, pero cada tarea pertenece a un único usuario. 
+Usuario — ObraMultimedia a través de ProgresoObra (M:N):​
+Un usuario puede tener múltiples obras en su catálogo personal y una misma obra puede ser 
+seguida por muchos usuarios. Esta relación muchos a muchos se resuelve mediante la entidad 
+intermedia ProgresoObra, que almacena el avance particular (horas, capítulos, episodios) de 
+cada usuario en cada obra. 
+Usuario — SesionDescanso (1:N):​
+Un usuario puede realizar múltiples sesiones de descanso a lo largo del tiempo, mientras que cada 
+sesión de descanso queda asociada al usuario que canjeó las monedas. 
+ObraMultimedia — SesionDescanso (1:N):​
+Una obra puede ser seleccionada por la ruleta en múltiples sesiones de descanso, pero cada sesión 
+de descanso concreta asigna una única obra. 
+SesionDescanso — RecomendacionIA (1:1):​
+Cada sesión de descanso genera como máximo una justificación contextual mediante la 
+Inteligencia Artificial, vinculada de forma unívoca a dicha pausa. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 20 
+ 
+Tarea — RecomendacionIA (1:N):​
+Una tarea completada puede servir de contexto previo para una o varias recomendaciones del 
+Oráculo de IA, pero cada recomendación hace referencia a la última tarea que originó el saldo 
+gastado. 
+Usuario — Mision (1:N):​
+Un usuario recibe múltiples misiones dinámicas a lo largo de las semanas, y cada misión 
+individual pertenece a un usuario concreto. 
+Usuario — Usuario a través de Amistad (M:N reflexiva):​
+Un usuario puede mantener vínculos de amistad con múltiples usuarios. Se modela como una 
+relación reflexiva gestionada por la entidad Amistad, que conecta al usuario solicitante con el 
+usuario receptor. 
+ 
+6.10.4. Cardinalidades  
+ 
+ 
+Relación Entidad 
+origen 
+Cardinali
+dad 
+Entidad 
+destino 
+Cardinali
+dad 
+Justificación de 
+cardinalidad 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 21 
+ 
+Posee 
+billetera 
+Usuario (1, 1) Billetera (1, 1) Todo usuario debe tener 
+exactamente una 
+billetera al crearse, y 
+cada billetera pertenece 
+estrictamente a un 
+único usuario. 
+Crea tareas Usuario (0, N) Tarea (1, 1) Un usuario nuevo 
+puede no tener tareas 
+registradas o tener 
+muchas (0, N); cada 
+tarea pertenece 
+obligatoriamente a un 
+único usuario (1, 1). 
+Registra 
+seguimient
+o 
+Usuario (0, N) ProgresoObra (1, 1) Un usuario puede no 
+tener aún obras en su 
+lista o tener múltiples 
+registros de 
+seguimiento (0, N); 
+cada registro pertenece 
+solo a ese usuario (1, 
+1). 
+Es 
+catalogada 
+ObraMultime
+dia 
+(0, N) ProgresoObra (1, 1) Una obra dada de alta 
+puede no estar en el 
+catálogo de nadie o en 
+el de varios usuarios (0, 
+N); cada registro apunta 
+exactamente a una obra 
+(1, 1). 
+Realiza 
+descansos 
+Usuario (0, N) SesionDesca
+nso 
+(1, 1) Un usuario puede no 
+haber hecho tiradas o 
+acumular muchas (0, 
+N); cada sesión de 
+descanso pertenece a 
+un solo usuario (1, 1). 
+Asigna 
+obra en 
+pausa 
+ObraMultime
+dia 
+(0, N) SesionDesca
+nso 
+(1, 1) Una obra puede no 
+haber salido nunca en 
+la ruleta o haber salido 
+varias veces (0, N); 
+cada descanso asigna 
+exactamente una obra 
+(1, 1). 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 22 
+ 
+Genera 
+recomenda
+ción 
+SesionDesc
+anso 
+(0, 1) Recomendaci
+onIA 
+(1, 1) Un descanso puede no 
+tener recomendación (si 
+falló la IA o se omitió) o 
+tener como máximo una 
+(0, 1); cada 
+recomendación 
+pertenece a una única 
+sesión (1, 1). 
+Contextuali
+za con 
+tarea 
+Tarea (0, N) Recomendaci
+onIA 
+(0, 1) Una tarea puede no 
+vincularse o vincularse 
+a varias 
+recomendaciones (0, 
+N); una recomendación 
+puede asociarse a una 
+tarea previa o a ninguna 
+si se inició sin tarea 
+previa (0, 1). 
+Asigna 
+retos 
+Usuario (0, N) Mision (1, 1) Un usuario puede tener 
+asignadas cero o varias 
+misiones semanales (0, 
+N); cada misión 
+corresponde 
+exclusivamente a ese 
+usuario (1, 1). 
+Solicita 
+amistad 
+Usuario (0, N) Amistad (1, 1) Un usuario puede 
+enviar cero o múltiples 
+solicitudes de amistad 
+(0, N); cada registro de 
+amistad tiene un único 
+usuario emisor (1, 1). 
+Recibe 
+amistad 
+Usuario (0, N) Amistad (1, 1) Un usuario puede 
+recibir cero o múltiples 
+solicitudes de amistad 
+(0, N); cada registro de 
+amistad tiene un único 
+usuario receptor (1, 1). 
+ 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 23 
+ 
+6.10.5. Diagrama entidad-relación  
+ 
+6.10.6. Esquema relacional inicial  
+Relación (Tabla) Esquema Relacional (PK en negrita, FK* con 
+referencia) 
+USUARIO (id_usuario, username, email, password_hash, rol, 
+nivel, xp_actual, racha_dias, activo, fecha_registro) 
+BILLETERA (id_billetera, id_usuario*  USUARIO, →
+saldo_monedas, ultima_actualizacion) 
+MOVIMIENTO_BILLETERA (id_movimiento, id_billetera*  BILLETERA, tipo, →
+concepto, cantidad, fecha_hora) 
+TAREA (id_tarea, id_usuario*  USUARIO, titulo, →
+categoria, prioridad, tiempo_estimado, tiempo_real, 
+recompensa_estimada, estado, 
+monedas_obtenidas, fecha_creacion) 
+OBRA_MULTIMEDIA (id_obra, id_externo_api, titulo, tipo_medio, 
+sinopsis, genero, unidad_total, 
+duracion_media_unidad) 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 24 
+ 
+PROGRESO_OBRA (id_progreso, id_usuario*  USUARIO, id_obra*  → →
+OBRA_MULTIMEDIA, estado, unidad_actual, 
+plataforma, ultima_interaccion) 
+SESION_DESCANSO (id_descanso, id_usuario*  USUARIO, id_obra*  → →
+OBRA_MULTIMEDIA, duracion_minutos, 
+coste_monedas, fecha_inicio, completado) 
+RECOMENDACION_IA (id_recomendacion, id_descanso*  →
+SESION_DESCANSO, id_tarea_previa*  TAREA, →
+texto_justificacion, fecha_generacion) 
+MISION (id_mision, id_usuario*  USUARIO, descripcion, →
+recompensa_monedas, progreso_actual, 
+objetivo_total, completada, fecha_limite) 
+AMISTAD (id_amistad, id_usuario_solicitante*  USUARIO, →
+id_usuario_receptor*  USUARIO, estado, →
+fecha_solicitud) 
+ 
+ 
+6.11. Arquitectura de la aplicación  
+Para el desarrollo de TimeForge se ha definido una arquitectura por capas basada en el 
+patrón MVC (Modelo-Vista-Controlador) y el patrón DAO/Repositorio. Esta estructura 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 25 
+ 
+organiza el sistema en bloques independientes para separar la presentación visual de las 
+reglas de negocio y de la gestión de datos. 
+La aplicación se divide en los siguientes cuatro niveles principales: 
+●​ Interfaz gráfica (Capa de Presentación / Vista):​
+Es el nivel con el que interactúa el usuario. Muestra las pantallas del gestor de tareas, el 
+cronómetro activo, el catálogo multimedia (backlog), la ruleta de descansos (gacha) y 
+las funciones sociales, encargándose únicamente de capturar eventos y presentar 
+datos. 
+●​ Lógica de negocio (Controladores y Servicios):​
+Representa el núcleo operativo del sistema y se divide en dos subbloques: 
+○​ Controladores: Reciben las peticiones de la interfaz gráfica, validan las 
+entradas y coordinan la respuesta. 
+○​ Servicios (Reglas de negocio): Procesan la lógica propia de la aplicación, 
+como el cálculo de monedas según la puntualidad, el algoritmo ponderado de la 
+ruleta, el control de saldo de la billetera y la conexión con la API externa de 
+Inteligencia Artificial ("El Oráculo"). 
+●​ Acceso a datos (Repositorios / DAO):​
+Actúa como intermediario entre la lógica de negocio y la base de datos. Se encarga de 
+transformar las entidades del dominio (Usuario, Tarea, ObraMultimedia, 
+SesionDescanso, etc.) en operaciones CRUD mediante consultas SQL, aislando al resto 
+del sistema del motor de persistencia. 
+●​ Base de datos (Capa de Persistencia):​
+Nivel físico soportado por un sistema gestor de bases de datos relacional (MySQL), 
+donde se almacena de forma estructurada e íntegra toda la información de los usuarios, 
+sus tareas, saldos y catálogos. 
+ 
+Componentes de la arquitectura y sus responsabilidades 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 26 
+ 
+●​ Interfaz gráfica (Vista): Compuesta por las pantallas de usuario desarrolladas en Java / 
+HTML / CSS. Su responsabilidad es mostrar los datos al usuario (lista de tareas, 
+temporizador, ruleta y catálogo) y capturar sus acciones (clics y formularios) sin ejecutar 
+cálculos ni validaciones de negocio. 
+●​ Controladores (Lógica de negocio): Clases encargadas de recibir los eventos 
+procedentes de la interfaz gráfica, validar que los parámetros de entrada sean correctos 
+y delegar la operación en el servicio correspondiente. 
+●​ Servicios / Reglas de negocio (Lógica de negocio): Contienen toda la lógica central 
+de TimeForge. Su responsabilidad es calcular la liquidación de monedas según la 
+puntualidad en las tareas, ejecutar la selección ponderada de la ruleta (gacha), verificar 
+saldos de la billetera y gestionar las llamadas a la API externa de Inteligencia Artificial 
+("El Oráculo") y a las APIs externas de catálogos multimedia (videojuegos, manga y 
+series/anime). 
+●​ Repositorios / DAO (Acceso a datos): Clases que encapsulan las consultas a la base 
+de datos. Su responsabilidad es traducir los objetos del programa (Usuario, Tarea, 
+ObraMultimedia, SesionDescanso, etc.) en sentencias SQL (SELECT, INSERT, 
+UPDATE, DELETE). 
+●​ Base de datos MySQL (Persistencia): Motor relacional encargado de almacenar la 
+información de forma permanente, garantizando la integridad referencial y las 
+transacciones de datos. 
+Comunicación entre componentes 
+El flujo de comunicación sigue un recorrido lineal y desacoplado de ida y vuelta: 
+1.​ El Usuario interactúa con la Interfaz gráfica (por ejemplo, al pulsar en "Completar 
+tarea" o "Tirar de la ruleta"). 
+2.​ La Interfaz gráfica envía la petición al Controlador correspondiente. 
+3.​ El Controlador invoca al Servicio, el cual aplica las reglas de negocio (y consulta la 
+API de IA si se trata de una recomendación). 
+4.​ El Servicio solicita o guarda la información llamando al Repositorio / DAO. 
+5.​ El Repositorio / DAO ejecuta la consulta SQL contra la Base de datos MySQL, recibe 
+los resultados y los devuelve hacia arriba siguiendo el camino inverso hasta actualizar la 
+pantalla del usuario. 
+Justificación de la estructura elegida 
+Se ha seleccionado esta arquitectura por capas basada en MVC y DAO por las siguientes 
+razones: 
+●​ Separación de responsabilidades: Evita mezclar código visual con consultas SQL o 
+cálculos de monedas, logrando un código limpio y ordenado. 
+●​ Facilidad de mantenimiento y pruebas: Permite probar la lógica de negocio (como el 
+cálculo de recompensas o la ruleta) mediante pruebas unitarias (JUnit) sin necesidad de 
+levantar la interfaz gráfica. 
+●​ Escalabilidad y flexibilidad: Si en el futuro se desea cambiar el diseño visual o 
+sustituir el motor de base de datos, solo será necesario modificar la capa afectada sin 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 27 
+ 
+alterar el resto de la aplicación. 
+ 
+6.12. Diseño inicial de clases  
+ 
+ 
+ 
+6.13. Diseño de la interfaz  
+ 
+Diseño principal de la interfaz: https://clink-epic-93348728.figma.site 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 28 
+ 
+ 
+6.14. Tecnologías propuestas  
+Define las tecnologías que inicialmente tienes previsto utilizar.  
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 29 
+ 
+Como mínimo:  
+ 
+Elemento  Tecnología prevista  Justificación 
+Lenguaje  Java  Es el lenguaje en el que más cómodo 
+estoy ya que es el que más he 
+utilizado y de los más óptimos. 
+Control de versiones  Git + GitHub  Estándar de la industria para el 
+seguimiento del código fuente, 
+control de versiones mediante ramas 
+y almacenamiento remoto seguro del 
+repositorio del proyecto.  
+Entorno  VS Code  Editor ligero, altamente modular y 
+extensible mediante complementos 
+específicos para Java, bases de datos 
+y desarrollo web en un único entorno 
+de trabajo.  
+Base de datos  MySQL Sistema gestor de bases de datos 
+relacional (RDBMS) consolidado, 
+eficiente para garantizar la integridad 
+referencial y gestionar las 
+transacciones ACID de las billeteras 
+y tareas.  
+Framework  Maven / Spring Boot Maven para la automatización de 
+compilación y gestión de 
+dependencias; Spring Boot para 
+articular la inyección de 
+dependencias, controladores REST y 
+la capa de servicios desacoplada.  
+Interfaz  HTML5 / CSS3 / JavaScript (o 
+React)  
+Permite diseñar una interfaz de 
+usuario moderna, fluida y con modo 
+oscuro (dark gaming dashboard), 
+facilitando componentes visuales 
+avanzados (temporizadores circulares 
+y ruletas).  
+ 
+ 
+Otras tecnologías: 
+ 
+JUnit 5: Framework para pruebas unitarias automatizadas sobre la lógica de negocio (cálculo de 
+recompensas, saldo de billetera y tiradas de ruleta). 
+Figma: Herramienta de diseño y prototipado colaborativo para definir los flujos de navegación, guías de 
+estilo y wireframes antes de su maquetación. 
+APIs Externas: 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 30 
+ 
+●​ API de Inteligencia Artificial (OpenAI / Google Gemini): Integración con modelos de lenguaje 
+para generar las justificaciones y recomendaciones contextuales de "El Oráculo". 
+●​ APIs de Catálogos Multimedia (RAWG / Jikan): Servicios externos para la búsqueda y 
+extracción automatizada de metadatos, portadas e información de videojuegos, anime y manga. 
+Postman: Utilidad para la prueba y depuración de llamadas HTTP contra los endpoints y APIs externas. 
+ 
+ 
+6.15. Registro del uso de inteligencia artificial  
+ 
+ID Tarea Herramient
+a 
+Objetivo Resultado Decisión tomada 
+IA-01 Idea de 
+negocio y 
+propuesta 
+(6.1) 
+Gemini Conceptualizar 
+la temática 
+central de la 
+aplicación y 
+definir su 
+propuesta de 
+valor diferencial. 
+Planteamiento de 
+TimeForge: gestor 
+de productividad 
+gamificado que 
+equilibra enfoque y 
+ocio mediante 
+recompensas. 
+Adoptar el modelo de 
+economía virtual 
+donde el tiempo de 
+trabajo desbloquea 
+descansos 
+justificados en ocio. 
+IA-02 Análisis 
+de 
+mercado 
+y 
+competido
+res (6.2 / 
+6.3) 
+Gemini Evaluar 
+herramientas 
+existentes de 
+productividad y 
+aplicaciones de 
+gestión de 
+tareas y backlog. 
+Identificación de 
+carencias en apps 
+tradicionales 
+(separación 
+estricta entre 
+trabajo y ocio sin 
+conexión real). 
+Posicionar 
+TimeForge como un 
+puente entre la 
+concentración tipo 
+Pomodoro y el 
+backlog multimedia 
+personal. 
+IA-03 Objetivos 
+y alcance 
+del 
+proyecto 
+(6.4 / 6.5) 
+Gemini Acotar el 
+alcance 
+funcional inicial y 
+definir los 
+entregables 
+obligatorios 
+frente a 
+funciones 
+secundarias. 
+Lista estructurada 
+de objetivos: 
+gestión de tareas, 
+temporizador, 
+ruleta de ocio, 
+integración con IA 
+y misiones. 
+Priorizar el núcleo 
+funcional en 
+escritorio y dejar las 
+funcionalidades 
+móviles/sociales 
+avanzadas como 
+ampliación. 
+IA-04 Perfiles 
+de 
+usuario y 
+casos de 
+uso (6.6 / 
+6.7) 
+Gemini Caracterizar a 
+los usuarios 
+objetivo y 
+modelar sus 
+interacciones 
+clave. 
+Definición de 
+actores del sistema 
+y especificación de 
+flujos principales  
+Establecer un flujo 
+guiado con rangos, 
+rachas de actividad y 
+niveles de usuario. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 31 
+ 
+IA-06 Casos 
+límite y 
+control de 
+fallos 
+(6.9) 
+Gemini Identificar 
+situaciones 
+críticas, errores 
+de red, 
+casuísticas de 
+fallo y posibles 
+trampas del 
+usuario. 
+Definición de 
+escenarios de 
+desincronización, 
+fallos en APIs 
+externas, 
+abandono de 
+cronómetros y 
+saldo insuficiente. 
+Implementar políticas 
+de penalización 
+equilibrada y 
+mecanismos de 
+tolerancia a 
+fallos/modo offline 
+para APIs externas. 
+IA-07 Modelo 
+de datos y 
+entidades 
+(6.10.2 y 
+6.10.3) 
+Gemini Diseñar las 
+entidades del 
+dominio, tipos de 
+atributos y 
+relaciones de 
+claves (PK y 
+FK). 
+Estructuración de 
+tablas: Usuario, 
+Billetera, Tarea, 
+ObraMultimedia, 
+ProgresoObra, 
+SesionDescanso y 
+Mision. 
+Separar el catálogo 
+global de obras del 
+avance individual 
+mediante la entidad 
+intermedia asociativa 
+ProgresoObra. 
+IA-09 Arquitectu
+ra de la 
+aplicación 
+(6.11) 
+Gemini Definir una 
+estructura por 
+capas 
+desacoplada 
+que integre la IA 
+y garantice 
+mantenibilidad. 
+Arquitectura en 4 
+niveles 
+(Presentación, 
+Lógica de 
+Negocio/Servicios, 
+Acceso a Datos y 
+MySQL) con 
+llamadas a APIs. 
+Adoptar el patrón 
+MVC con 
+DAO/Repositorios  
+IA-11 Diagrama 
+de clases 
+UML 
+(6.12) 
+Gemini Modelar las 
+clases 
+orientadas a 
+objetos, 
+servicios de 
+negocio y 
+dependencias 
+del sistema. 
+Código en 
+Mermaid con 
+atributos, métodos 
+y servicios 
+especializados  
+Insertar directamente 
+el diagrama UML 
+gráfico limpio en la 
+memoria  
+IA-12 Prototipad
+o y diseño 
+de UI 
+(6.13) 
+Lovable / 
+v0 / Figma / 
+Gemini 
+Generar los 
+conceptos 
+visuales, adaptar 
+prompts de 
+diseño y 
+estructurar la 
+navegación 
+entre vistas. 
+Prototipos web de 
+escritorio  
+Documentar con 
+precisión qué ve y 
+qué hace el usuario 
+en cada pantalla y 
+organizar los 
+prototipos en Figma. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 32 
+ 
+IA-13 Tecnologí
+as 
+propuesta
+s (6.14) 
+Gemini Seleccionar y 
+justificar el stack 
+tecnológico 
+idóneo para el 
+desarrollo de la 
+aplicación. 
+Matriz con Java, 
+Spring Boot, 
+MySQL, 
+Git/GitHub, VS 
+Code, 
+HTML5/CSS3/JS, 
+JUnit 5 y APIs de 
+IA/Ocio. 
+Fijar un stack 
+multiplataforma 
+estándar 
+ 
+6.16. Evaluación crítica del uso de IA  
+6.16.1. ¿En qué tareas te ha resultado útil la IA?  
+En la mayoría de casos de esta documentación, como en la de definir o diseñar en varios casos 
+y ayudarme en el planteamiento de la aplicación. 
+6.16.2. ¿Qué propuestas de la IA has rechazado?  
+Un par, como la generación directa de imágenes de la interfaz antes de hacerlo en figma y 
+varios prompts de diseño de la página web. 
+6.16.3. ¿Has detectado algún error o propuesta inadecuada?  
+Si, mientras revisaba el documento me he dado cuenta de varios fallos como: 
+-​ Se propuso que los costes en monedas de los descansos fueran editables por el 
+usuario desde Configuración, lo cual invalidaría la economía virtual y el propósito 
+anti-procrastinación; se rectificó fijando costes inmutables en el sistema.  
+ 
+-​ Existían disparidades en las duraciones de los descansos entre los casos de uso, 
+requisitos y pantallas (15/45 min frente a 15/30/60 min), unificándose formalmente en 
+tres modalidades estándar.  
+ 
+-​ El modelo de datos inicial omitía tablas de auditoría de transacciones y situaba el 
+número total de episodios/capítulos en el registro de progreso individual en lugar de en 
+la ficha de la obra, anomalías que fueron subsanadas en el esquema relacional 
+definitivo.  
+6.16.4. ¿Qué decisiones has tomado tú directamente?  
+He tomado varias decisiones directamente, como por ejemplo la orientación de la aplicación y 
+la integración de APIs externas. 
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 33 
+ 
+6.16.5. ¿Ha cambiado el diseño inicial de tu proyecto como 
+consecuencia de utilizar IA?  
+No, lo principal está en la aplicación, se habló sobre una aplicación la cual puedes utilizar para 
+gestionar tu tiempo y eso es lo que está plasmado en la aplicación, tanto tareas, como el 
+temporizador, como las monedas para poder ganar un descanso, etc…  
+Javier Valencia Miranda ​ ​ ​ ​ ​ ​ ​ ​ ​ 34 

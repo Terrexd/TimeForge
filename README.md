@@ -1,52 +1,40 @@
-# TimeForge — Sistema Gamificado de Productividad y Ocio Digital
+# TimeForge
 
-TimeForge es una aplicación web *Desktop-First* diseñada para combatir la procrastinación y la parálisis por elección. Transforma la gestión de tareas personales combinando un temporizador de enfoque, una economía virtual basada en la puntualidad y un catálogo de ocio digital (*backlog*) asistido por Inteligencia Artificial ("El Oráculo")[cite: 4].
+TimeForge convierte el tiempo dedicado a tus tareas en monedas que puedes gastar en descansos. Durante cada descanso, la ruleta elige una obra de tu biblioteca. Proyecto intermodular de DAM de Javier Valencia Miranda.
 
----
+## Ejecutar el proyecto
 
-## 📌 Resumen del Proyecto
+Con un JDK 21 o superior, abre PowerShell en la carpeta del proyecto y ejecuta:
 
-* **Ciclo:** Desarrollo de Aplicaciones Multiplataforma (DAM)[cite: 4].
-* **Autor:** Javier Valencia Miranda[cite: 4].
-* **Materia:** Proyecto Intermodular / Análisis y Diseño de Software[cite: 4].
-* **Versión:** 1.0 (Fase de Documentación y Diseño Inicial)[cite: 4].
-* **Prototipo Interactivo:** [Acceso al prototipo en Figma / Web](https://clink-epic-93348728.figma.site)[cite: 4].
+```powershell
+.\mvnw.cmd spring-boot:run
+```
 
----
+Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución descarga las dependencias de Maven. Por defecto se utiliza H2 y los datos se guardan en `.data/`. El perfil `mysql` permite usar MySQL con los ajustes de `application-mysql.properties`.
 
-## 🎮 ¿Cómo Funciona TimeForge?
+## Dónde está cada cosa
 
-1. **Gestión de Tareas:** El usuario planifica sus obligaciones con tiempos estimados de resolución[cite: 4].
-2. **Temporizador de Enfoque:** El cronómetro mide el tiempo real invertido[cite: 4].
-3. **Recompensas Virtuales:** Cumplir los plazos otorga monedas de oro en la billetera virtual según la puntualidad demostrada[cite: 4].
-4. **Ruleta de Descanso (Gacha):** Las monedas se canjean para desbloquear pausas delimitadas (15 min, 30 min o 60 min)[cite: 4].
-5. **El Oráculo (IA):** Un algoritmo ponderado selecciona la obra ideal del backlog y una IA contextual justifica la elección según el esfuerzo previo[cite: 4].
+| Parte | Carpeta | Qué encontrarás |
+| --- | --- | --- |
+| Vista | [resources/vista](src/main/resources/vista) | La página de entrada, los estilos y el JavaScript que dibuja las pantallas y recoge los clics. |
+| Controlador | [controlador](src/main/java/es/timeforge/controlador) | Un controlador por tema. Recibe una petición como «crear tarea» y devuelve la respuesta a la vista. |
+| Modelo | [modelo](src/main/java/es/timeforge/modelo) | Los datos y las reglas de TimeForge. En `entidades` están las clases como Tarea y Usuario. En `servicios` se calcula la recompensa y se decide cuándo se puede iniciar un descanso. |
+| Persistencia e integraciones | Dentro del modelo | `repositorio` lee y guarda datos. `integraciones` conecta con el catálogo externo y el Oráculo. |
 
----
+[AplicacionTimeForge.java](src/main/java/es/timeforge/AplicacionTimeForge.java) arranca el servidor. La carpeta [configuracion](src/main/java/es/timeforge/configuracion) contiene la seguridad y la creación del administrador inicial.
 
-## 🛠️ Stack Tecnológico Previsto
+## Sigue una tarea desde el formulario hasta la base de datos
 
-| Capa / Elemento | Tecnología Seleccionada |
-| :--- | :--- |
-| **Lenguaje Backend** | Java (JDK 17+)[cite: 4] |
-| **Framework Base** | Spring Boot / Maven[cite: 4] |
-| **Base de Datos** | MySQL (Persistencia relacional ACID)[cite: 4] |
-| **Frontend / Interfaz** | HTML5, CSS3, JavaScript (o React) — *Dark Gaming Dashboard*[cite: 4] |
-| **Control de Versiones** | Git + GitHub[cite: 4] |
-| **Testing** | JUnit 5[cite: 4] |
-| **APIs Externas** | Google Gemini / OpenAI (IA), RAWG y Jikan (Catálogos multimedia)[cite: 4] |
+1. Abre [formularios.js](src/main/resources/vista/formularios.js) y busca `formularioTarea`. Ahí se muestran los campos que rellenas al crear una tarea.
+2. Al pulsar **Crear tarea**, [eventos.js](src/main/resources/vista/eventos.js) recoge el envío de `task-form` y hace una petición `POST /api/tasks`.
+3. En [ControladorTareas.java](src/main/java/es/timeforge/controlador/ControladorTareas.java), `crearTarea` recibe los datos validados, identifica al usuario y llama al servicio.
+4. En [ServicioTareas.java](src/main/java/es/timeforge/modelo/servicios/ServicioTareas.java), `crear` construye una [Tarea](src/main/java/es/timeforge/modelo/entidades/Tarea.java), le asigna el usuario y pide al [Repositorio](src/main/java/es/timeforge/modelo/repositorio/Repositorio.java) que la guarde.
+5. La vista vuelve a cargar las tareas. [pantallas.js](src/main/resources/vista/pantallas.js) dibuja la lista actualizada.
 
----
+Si quieres cambiar **qué se ve**, empieza por la vista. Si quieres cambiar **cuántas monedas se ganan**, abre [ReglasRecompensa.java](src/main/java/es/timeforge/modelo/servicios/ReglasRecompensa.java). Las rutas y los campos que intercambian el navegador y el servidor conservan sus nombres originales, como `/api/tasks` y `estimatedMinutes`.
 
-## 📁 Estructura del Repositorio y Documentación
+## Pruebas y requisitos
 
-La memoria técnica del proyecto se encuentra estructurada en el directorio `/docs`:
+Para ejecutar las [pruebas](src/test/java/es/timeforge) usa `.\mvnw.cmd test`. Para generar el archivo que utiliza `iniciar.bat`, ejecuta `.\mvnw.cmd clean package`.
 
-* 📄 **[`docs/analisis-diseno.md`](docs/analisis-diseno.md):** Identificación general, justificación, objetivos del sistema y alcance funcional[cite: 4].
-* 📋 **[`docs/requisitos.md`](docs/requisitos.md):** Catálogo de requisitos funcionales (RF-01 a RF-24) y requisitos no funcionales (RNF-01 a RNF-07)[cite: 4].
-* 🔄 **[`docs/casos-uso.md`](docs/casos-uso.md):** Reglas de negocio (RN-01 a RN-09), matriz de casos de uso y especificaciones completas (CU-04 y CU-07)[cite: 4].
-* 🗄️ **[`docs/modelo-datos/`](docs/modelo-datos/):** Esquema relacional normalizado, catálogo de atributos, relaciones y [diagrama E/R](docs/modelo-datos/er-diagrama.png)[cite: 4, 6].
-* 🏛️ **[`docs/arquitectura.md`](docs/arquitectura.md):** Desacoplamiento por capas (Presentación, Negocio, DAO/Acceso a datos y MySQL)[cite: 4].
-* 🧩 **[`docs/uml/`](docs/uml/):** Modelado orientado a objetos y [diagrama de clases inicial](docs/uml/diagrama-clases.png)[cite: 4, 5].
-* 🖥️ **[`docs/wireframes/`](docs/wireframes/):** Capturas del prototipo de alta fidelidad y [diagrama de flujo de navegación](docs/wireframes/navegacion-flujo.png)[cite: 4].
-* 🤖 **[`docs/ia-registro.md`](docs/ia-registro.md):** Registro de trazabilidad y evaluación crítica del uso de herramientas de Inteligencia Artificial[cite: 4].
+Consulta el [documento de análisis y requisitos](docs/requisitos.txt) y el [prototipo de la interfaz](https://clink-epic-93348728.figma.site).
