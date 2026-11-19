@@ -28,4 +28,4 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 ## Última tarea
 
-Se creó esta memoria a petición del usuario. Se contrastó el resumen con el README, la configuración de Spring y el historial de Git. Los commits más recientes de la aplicación fueron `7fbcd79` (MVC), `cc2a2c3` (buscador RAWG) y `30c1359` (carga de la clave y vuelta al buscador compartido).
+Para solicitar la clave de RAWG, se comprobó que el repositorio configurado como `origin` es `https://github.com/Terrexd/TimeForge`. Se sugirió usar esa URL en el formulario y describir TimeForge como un proyecto educativo que permite buscar juegos en RAWG y guardarlos en una biblioteca personal.
