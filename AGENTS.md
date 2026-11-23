@@ -30,6 +30,10 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 Se actualizaron las tarjetas y el formulario de progreso para mostrar la portada y las horas de historia principal también en juegos ya guardados. Pasaron 35 pruebas. En Chrome, con el JAR de inicio y una base temporal, se comprobó que Cyberpunk 2077 muestra unas 26 h y una imagen real de Steam de 460 × 215 píxeles. La prueba de importación de RAWG sigue usando una respuesta simulada.
 
-## Última tarea
+## Integración de IGDB
 
 Se incorporó Videojuegos · IGDB al recorrido Buscar online → Añadir. Se guardan las horas y la portada de la ficha seleccionada; a falta de portada se prueba una captura. La importación permite completar una ficha previa del mismo título conservando el progreso. Se documentó la configuración en README.md. Pasaron 37 pruebas, incluida una integración con respuestas simuladas que verifica búsqueda, importación, consulta de biblioteca y portada. Se actualizó el JAR de iniciar.bat. Falta la verificación en vivo con credenciales de Twitch, ausentes en el entorno y en el archivo .env local.
+
+## Última tarea
+
+Se verificó con Git que cada tarea reciente tiene su propio commit, incluida la integración de IGDB en `98b06d2`. El árbol de trabajo estaba limpio al comenzar la consulta.
