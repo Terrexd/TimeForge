@@ -71,6 +71,13 @@ async function cargarInvitaciones() {
 document.addEventListener("click", async (event) => {
   const b = event.target.closest("button");
   if (!b || b.disabled || (b.type === "submit" && b.closest("form"))) return;
+  if (b.dataset.paso) {
+    const form = b.form, cantidad = form.elements.currentUnits;
+    const siguiente = (cantidad.valueAsNumber || 0) + Number(b.dataset.paso);
+    cantidad.value = Math.min(Number(cantidad.max), Math.max(0, Math.round(siguiente * 10) / 10));
+    actualizarEditorProgreso(form, "currentUnits");
+    return;
+  }
   if (b.dataset.page) {
     try {
       await navigate(b.dataset.page);
@@ -301,6 +308,7 @@ document.addEventListener("submit", async (event) => {
         for (const k of ["currentUnits", "volume", "season"])
           data[k] = Number(data[k]);
         await api("/catalog/" + form.dataset.id, "PUT", data);
+        toast("Progreso guardado.");
         break;
       case "profile-form":
         await api("/me", "PUT", data);
@@ -362,6 +370,8 @@ document.addEventListener("change", (e) => {
   }
 });
 document.addEventListener("input", (e) => {
+  if (e.target.form?.id === "progress-form" && ["state", "currentUnits"].includes(e.target.name))
+    actualizarEditorProgreso(e.target.form, e.target.name);
   if (e.target.id === "catalog-query") {
     S.query = e.target.value;
     const list = S.catalog.filter(

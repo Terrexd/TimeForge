@@ -1209,6 +1209,67 @@ dialog h2 {
   font-size: 22px;
   margin-bottom: 22px;
 }
+.obra-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.obra-miniatura {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 62px;
+  height: 82px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #493364, #25203b);
+  color: #dbbfff;
+}
+.obra-miniatura img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.obra-cabecera h2 { margin: 4px 0; font-size: clamp(22px, 4vw, 30px); overflow-wrap: anywhere; }
+.obra-tipo { color: #d7b5ff; font-weight: 650; }
+.obra-cabecera small, .obra-cifra span, .obra-contador output { color: #c2b9d2; }
+.obra-estados { border: 0; padding: 0; margin: 20px 0 16px; min-width: 0; }
+.obra-estados legend, .obra-contador > label { font-weight: 650; font-size: 14px; }
+.obra-estados > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 9px; }
+.obra-estados label { position: relative; cursor: pointer; }
+.obra-estados input { position: absolute; opacity: 0; }
+.obra-estados span {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px; border-radius: 9px; border: 1px solid var(--line); background: #100e20;
+  font-size: 12px; color: #c5bdd4;
+}
+.obra-estados .icon { width: 15px; height: 15px; }
+.obra-estados input:checked + span { background: #382553; border-color: #ad7beb; color: #f3eaff; font-weight: 700; }
+.obra-estados input:focus-visible + span { outline: 2px solid white; outline-offset: 2px; }
+.obra-contador {
+  padding: 18px; background: linear-gradient(120deg,#262034,#1a182a);
+  border: 1px solid #44364f; border-radius: 14px;
+}
+.obra-pasos, .obra-cifra, .obra-botones { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.obra-pasos { margin: 10px 0; justify-content: space-between; }
+.obra-cifra input {
+  width: auto; field-sizing: content; min-width: 64px; max-width: 9ch; padding: 3px 5px; font-size: 29px; text-align: center;
+  font-weight: 700; font-variant-numeric: tabular-nums; appearance: textfield;
+}
+.obra-cifra input::-webkit-inner-spin-button { appearance: none; }
+.obra-botones button { min-height: 40px; }
+.obra-botones [data-paso="1"] { color: #d7ffab; background: #294028; border-color: #53714a; }
+.obra-contador progress { display: block; margin: 14px 0 6px; width: 100%; }
+.obra-contador output { font-size: 12px; }
+.obra-detalles { margin-top: 15px; }
+.obra-detalles summary { cursor: pointer; color: #d8cee9; padding: 8px 0; }
+.obra-detalles .form-grid { margin: 9px 0; }
+.obra-opciones { padding-top: 6px; border-top: 1px solid var(--line); font-size: 12px; }
+.obra-opciones .form-actions { flex-wrap: wrap; justify-content: flex-start; margin-top: 10px; }
+.obra-sinopsis { margin: 8px 0; line-height: 1.6; color: #c5bdd4; }
+@media (max-width: 550px) {
+  .obra-estados > div { grid-template-columns: repeat(2, 1fr); }
+  .obra-contador { padding: 14px; }
+  .obra-pasos { row-gap: 12px; }
+}
 #toast {
   position: fixed;
   bottom: 25px;

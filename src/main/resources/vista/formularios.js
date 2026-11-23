@@ -1,6 +1,6 @@
-function modal(title, html) {
+function modal(title, html, cabecera = "") {
   $("#modal-content").innerHTML =
-    `<h2>${title}</h2>${html}<p class="error" id="modal-error" role="alert"></p>`;
+    `${cabecera || `<h2 id="titulo-modal">${title}</h2>`}${html}<p class="error" id="modal-error" role="alert"></p>`;
   if (!$("#modal").open) $("#modal").showModal();
 }
 function actions(label = "Guardar") {
@@ -40,12 +40,56 @@ function mostrarUnidadesObra() {
   form.elements.totalUnits.closest("label").hidden = form.elements.type.value === "GAME";
 }
 function formularioProgreso(id) {
-  const p = S.catalog.find((p) => p.id === Number(id)),
-    w = p.work;
-  modal(
-    esc(w.title),
-    `<form id="progress-form" data-id="${p.id}"><div class="form-grid"><label class="field">Estado<select name="state">${["PENDING", "IN_PROGRESS", "PAUSED", "COMPLETED"].map((v) => `<option value="${v}" ${p.state === v ? "selected" : ""}>${states[v]}</option>`).join("")}</select></label>${field(w.type === "GAME" ? "Horas jugadas" : "Progreso (" + units(w.type) + ") · total " + w.totalUnits, "currentUnits", p.currentUnits, `type="number" min="0" max="${w.type === "GAME" ? 100000 : w.totalUnits}" step="${w.type === "GAME" ? "0.1" : "1"}" required`)}${field("Tomo / volumen actual", "volume", p.volume, 'type="number" min="0" max="10000"')}${field("Temporada actual", "season", p.season, 'type="number" min="0" max="10000"')}${field("Plataforma", "platform", p.platform, 'maxlength="150"')}</div><p class="help">${esc(w.synopsis || "Sin sinopsis registrada.")}</p>${actions("Guardar progreso")}</form><div class="form-actions"><button data-action="classify" data-id="${p.id}">✧ Sugerir etiquetas con IA</button><button class="danger" data-action="delete-work" data-id="${p.id}">Retirar de biblioteca</button></div><p class="oracle-text" id="classification" hidden></p>`,
-  );
+  const p = S.catalog.find((obra) => obra.id === Number(id));
+  const w = p.work, juego = w.type === "GAME", episodios = ["ANIME", "SERIES"].includes(w.type);
+  const lectura = ["BOOK", "MANGA", "COMIC"].includes(w.type);
+  const unidad = juego ? "hora" : episodios ? "episodio" : lectura ? "capítulo" : "película";
+  const etiqueta = juego ? "Horas jugadas" : episodios ? "Episodios vistos" : lectura ? "Capítulos leídos" : "Películas vistas";
+  const objetivo = juego ? w.horasHistoriaPrincipal : w.totalUnits;
+  const meta = juego ? (objetivo ? `Historia principal · ≈ ${objetivo.toLocaleString("es-ES")} h` : "")
+    : w.type === "MOVIE" ? (w.minutesPerUnit ? `${w.minutesPerUnit} min` : "") : `${w.totalUnits} ${units(w.type)}`;
+  const cabecera = `<header class="obra-cabecera"><div class="obra-miniatura">${icon(juego ? "game" : lectura ? "book" : "play")}<img src="/api/covers/${w.id}" data-cover alt=""></div>
+    <div><span class="obra-tipo">${types[w.type]}</span><h2 id="titulo-modal">${esc(w.title)}</h2>${meta ? `<small>${meta}</small>` : ""}</div></header>`;
+  const estados = [["PENDING", "timer"], ["IN_PROGRESS", "play"], ["PAUSED", "pause"], ["COMPLETED", "check"]];
+  const numeroOpcional = 'type="number" min="0" max="10000" placeholder="Sin indicar"';
+  const oculto = (nombre, valor) => `<input type="hidden" name="${nombre}" value="${esc(valor)}">`;
+  modal(esc(w.title), `<form id="progress-form" data-id="${p.id}" data-juego="${juego}" data-objetivo="${objetivo || 0}">
+    <fieldset class="obra-estados"><legend>Estado</legend><div>${estados.map(([v, i]) =>
+      `<label><input type="radio" name="state" value="${v}" ${p.state === v ? "checked" : ""}><span>${icon(i)}${states[v]}</span></label>`).join("")}</div></fieldset>
+    <section class="obra-contador"><label for="cantidad-progreso">${etiqueta}</label>
+      <div class="obra-pasos"><div class="obra-cifra"><input id="cantidad-progreso" type="number" name="currentUnits" min="0" max="${juego ? 100000 : w.totalUnits}" step="${juego ? "0.1" : "1"}" value="${p.currentUnits}" required><span>${juego ? "h" : "de " + w.totalUnits}</span></div>
+      <div class="obra-botones"><button type="button" data-paso="-1" aria-label="Restar 1 ${unidad}">−</button><button type="button" data-paso="1">${w.type === "MOVIE" && w.totalUnits === 1 ? "Marcar como vista" : `+1 ${unidad}`}</button></div></div>
+      ${objetivo ? `<progress max="100" aria-label="Progreso de la obra"></progress><output aria-live="polite"></output>` : ""}
+    </section>
+    <details class="obra-detalles"><summary>Detalles de seguimiento</summary><div class="form-grid">
+      ${episodios ? field("Temporada actual", "season", p.season || "", numeroOpcional) : oculto("season", p.season)}
+      ${["MANGA","COMIC"].includes(w.type) ? field("Tomo actual", "volume", p.volume || "", numeroOpcional) : oculto("volume", p.volume)}
+      ${field("Plataforma", "platform", p.platform, 'maxlength="150" placeholder="Opcional"')}</div></details>
+    ${actions("Guardar progreso")}</form>
+    <details class="obra-detalles obra-opciones"><summary>Más sobre esta obra</summary>
+      ${w.synopsis ? `<p class="obra-sinopsis">${esc(w.synopsis)}</p>` : ""}
+      <div class="form-actions"><button data-action="classify" data-id="${p.id}">✧ Sugerir etiquetas con IA</button><button class="danger" data-action="delete-work" data-id="${p.id}">Retirar de biblioteca</button></div>
+      <p class="oracle-text" id="classification" hidden></p></details>`, cabecera);
+  actualizarEditorProgreso($("#progress-form"));
+}
+
+function actualizarEditorProgreso(form, cambio) {
+  const cantidad = form.elements.currentUnits, estado = form.elements.state;
+  const juego = form.dataset.juego === "true", objetivo = Number(form.dataset.objetivo);
+  if (cambio === "state" && estado.value === "COMPLETED" && !juego) cantidad.value = cantidad.max;
+  const valor = cantidad.valueAsNumber;
+  if (cambio === "currentUnits" && cantidad.validity.valid) {
+    if (!juego && valor === objetivo) estado.value = "COMPLETED";
+    else if ((!juego && estado.value === "COMPLETED") || (estado.value === "PENDING" && valor > 0))
+      estado.value = valor ? "IN_PROGRESS" : "PENDING";
+  }
+  form.querySelector('[data-paso="-1"]').disabled = !(valor > 0);
+  form.querySelector('[data-paso="1"]').disabled = valor >= Number(cantidad.max);
+  if (objetivo) {
+    const porcentaje = estado.value === "COMPLETED" ? 100 : Math.min(100, Math.max(0, Math.round((valor || 0) * 100 / objetivo)));
+    form.querySelector("progress").value = porcentaje;
+    form.querySelector("output").textContent = `${porcentaje} % ${juego ? "del tiempo estimado" : "completado"}`;
+  }
 }
 function buscarObrasExternas() {
   modal(

@@ -24,8 +24,14 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 **Biblioteca de videojuegos.** El recorrido es **Biblioteca de ocio → Buscar online → Videojuegos → Añadir**. El buscador también permite filtrar por título. Hay una sola opción de videojuegos. El servidor consulta IGDB cuando dispone de sus credenciales de Twitch y recurre a la tienda pública de Steam si faltan o falla la búsqueda. RAWG se retiró. Las fichas anteriores conservan el progreso y pueden recuperar portadas desde Steam. Las horas jugadas y las horas estimadas de campaña se muestran por separado. Cuando falta una duración en IGDB, se usa la estimación local de HowLongToBeat por título. Los títulos ambiguos o desconocidos muestran «Sin estimación».
 
-## Última tarea
+## Explorador de ocio
 
 El explorador carga sugerencias al abrirse y al cambiar entre videojuegos, anime, manga, series y películas. El listado se desplaza dentro de la ventana y permite añadir varias obras seguidas. Las filas muestran la portada disponible y la duración correspondiente al medio. Para manga se estima la lectura a diez minutos por capítulo. Se incorporó Cinemeta para cine y series y se separaron los identificadores de AniList y Jikan para importar la ficha seleccionada.
 
 Pasaron 38 pruebas. En Chrome con el JAR actualizado y una base temporal se añadieron cinco obras, una por categoría, sin cerrar el explorador. Se comprobaron la carga de imágenes, la duración, el desplazamiento en una pantalla de 390 píxeles y la búsqueda de películas por título. Las fichas sin información suficiente indican que falta la estimación.
+
+## Última tarea
+
+Se rediseñó el editor de progreso de la biblioteca. La cabecera muestra el formato, el título y la portada disponible. Se puede cambiar de estado, sumar o restar una unidad y escribir el progreso exacto. La barra y el porcentaje responden a los cambios antes de guardar. Las series y el anime muestran temporada, y el manga y los cómics muestran tomo. Los detalles secundarios y la sinopsis se despliegan bajo demanda.
+
+Pasaron 38 pruebas y se actualizó el JAR de iniciar.bat. En Chrome se verificaron el avance de una serie de siete episodios, completar y cancelar cambios, guardar la temporada y la plataforma, el tomo de un manga y el botón de película vista. Un videojuego conservó 35,5 horas al marcarlo completado. Se comprobó el diseño en escritorio y a 390 píxeles de ancho.
