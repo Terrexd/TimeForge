@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import es.timeforge.modelo.entidades.*;
 import es.timeforge.modelo.servicios.*;
 import es.timeforge.modelo.DatosEntrada.DatosObra;
+import es.timeforge.modelo.HistoriasPrincipales;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -56,8 +57,25 @@ public class CatalogoExterno {
             var json = remote.get(conClaveRawg(url, source));
             List<Map<String, Object>> out = new ArrayList<>();
             for (var item : json.path(source.equals("RAWG") ? "results" : "data")) {
-                out.add(Map.of("id", item.path(source.equals("RAWG") ? "id" : "mal_id").asLong(), "title",
-                        item.path(source.equals("RAWG") ? "name" : "title").asText(), "source", source));
+                boolean juego = source.equals("RAWG");
+                String titulo = item.path(juego ? "name" : "title").asText();
+                Map<String, Object> ficha = new HashMap<>();
+                ficha.put("id", item.path(juego ? "id" : "mal_id").asLong());
+                ficha.put("title", titulo);
+                ficha.put("source", source);
+                if (juego) {
+                    String imagen = item.path("background_image").asText("");
+                    for (var captura : item.path("short_screenshots")) {
+                        String urlCaptura = captura.path("image").asText("");
+                        if (captura.path("id").asLong() > 0 && urlCaptura.startsWith("https://media.rawg.io/")) {
+                            imagen = urlCaptura;
+                            break;
+                        }
+                    }
+                    if (imagen.startsWith("https://media.rawg.io/")) ficha.put("imagen", imagen);
+                    ficha.put("horasHistoriaPrincipal", HistoriasPrincipales.horas(titulo));
+                }
+                out.add(ficha);
             }
             return out;
         } catch (Exception e) {

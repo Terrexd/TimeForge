@@ -1240,6 +1240,19 @@ dialog h2 {
 .search-result span {
   font-size: 12px;
 }
+.search-result img {
+  width: 80px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.search-result small {
+  display: block;
+  margin-top: 4px;
+}
+#external-results .search-result span {
+  flex: 1;
+}
 .footer-note {
   font-size: 10px;
   color: #8c849e;

@@ -63,7 +63,7 @@ class AplicacionIntegracionTest {
                     return switch (url) {
                     case "https://api.rawg.io/api/games?page_size=12&search=Hollow+Knight&key=clave-de-prueba" ->
                         json.readTree("""
-                            {"results":[{"id":9767,"name":"Hollow Knight"}]}
+                            {"results":[{"id":9767,"name":"Hollow Knight","short_screenshots":[{"id":1,"image":"https://media.rawg.io/test.jpg"}]}]}
                             """);
                     case "https://api.rawg.io/api/games/9767?key=clave-de-prueba" ->
                         json.readTree("""
@@ -165,6 +165,8 @@ class AplicacionIntegracionTest {
         var resultado = mvc.perform(get("/api/catalog/search").session(sesion)
                 .param("source", "RAWG").param("q", "Hollow Knight"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("Hollow Knight"))
+                .andExpect(jsonPath("$[0].imagen").value("https://media.rawg.io/test.jpg"))
+                .andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(27.0))
                 .andReturn();
         var juego = body(resultado).get(0);
         String seleccion = json.writeValueAsString(Map.of("source", juego.get("source").asText(),
