@@ -47,4 +47,6 @@ Se ha realizado una auditoría exhaustiva de los 24 requisitos funcionales (RF-0
 6. **Módulo 6 (Social, Misiones y Logros):** Misiones semanales dinámicas, insignias automáticas, gestión de amigos y giros cooperativos de ruleta al 100 %.
 7. **Módulo 7 (Administración):** Gestión de usuarios (suspender/reactivar/eliminar) y métricas de consumo/latencia de IA al 100 %.
 
-Pasaron 39 pruebas automáticas sin fallos ni errores. Se generó limpiamente el artefacto ejecutable `target/timeforge-1.0.0.jar` (62,6 MB) para su ejecución directa con `iniciar.bat`. El repositorio se encuentra sincronizado con `origin/main` preservando todas las ramas y documentación previa del alumno.
+## Recarga de monedas para pruebas
+
+A petición del usuario para probar los descansos y la ruleta, se abonaron 2.000 monedas en la cuenta `admin` (contraseña `admin`), registrando la transacción en el historial de movimientos de su billetera. Saldo verificado en la base de datos local H2.
