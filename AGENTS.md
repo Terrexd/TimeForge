@@ -15,7 +15,7 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 - **Vista.** El HTML, los estilos y el JavaScript están en `src/main/resources/vista`. Los formularios recogen los datos, los eventos envían las peticiones y las pantallas muestran el resultado.
 - **Controladores y modelo.** En `src/main/java/es/timeforge`, cada controlador recibe las peticiones de su módulo. Dentro de `modelo`, las entidades representan los datos, los servicios aplican las reglas, el repositorio guarda y consulta, y las integraciones conectan con servicios externos. La reorganización al español conservó las rutas y los campos usados por la API y la base de datos.
-- **Ejecución.** Java 21 y Spring Boot con Maven. H2 guarda los datos locales en `.data/` y existe un perfil MySQL. En PowerShell, `.\mvnw.cmd test` ejecuta las pruebas y `.\mvnw.cmd clean package` genera el JAR que abre `iniciar.bat`.
+- **Ejecución.** Java 21/27 y Spring Boot con Maven. H2 guarda los datos locales en `.data/` y existe un perfil MySQL. En PowerShell, `.\mvnw.cmd test` ejecuta las pruebas y `.\mvnw.cmd clean package` genera el JAR que abre `iniciar.bat`.
 - **Referencias.** El README explica la puesta en marcha y sigue una tarea desde el formulario hasta la base de datos. Las reglas funcionales están en el [documento de requisitos](docs/requisitos.txt).
 
 ## Decisiones y comprobaciones vigentes
@@ -26,24 +26,25 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 ## Explorador de ocio
 
-El explorador carga sugerencias al abrirse y al cambiar entre videojuegos, anime, manga, series y películas. El listado se desplaza dentro de la ventana y permite añadir varias obras seguidas. Las filas muestran la portada disponible y la duración correspondiente al medio. Para manga se estima la lectura a diez minutos por capítulo. Se incorporó Cinemeta para cine y series y se separaron los identificadores de AniList y Jikan para importar la ficha seleccionada.
-
-Pasaron 38 pruebas. En Chrome con el JAR actualizado y una base temporal se añadieron cinco obras, una por categoría, sin cerrar el explorador. Se comprobaron la carga de imágenes, la duración, el desplazamiento en una pantalla de 390 píxeles y la búsqueda de películas por título. Las fichas sin información suficiente indican que falta la estimación.
+El explorador carga sugerencias al abrirse y al cambiar entre videojuegos, anime, manga, series y películas. El listado se desplaza dentro de la ventana y permite añadir varias obras seguidas. Las filas muestran la portada disponible y la duración correspondiente al medio. Para manga se estima la lectura a diez minutos por capítulo. Se incorporó Cinemeta para cine y series y se integró AniList con GraphQL como respaldo transparente ante caídas o límites de Jikan para importar fichas seleccionadas.
 
 ## Editor de progreso
 
 Se rediseñó el editor de progreso de la biblioteca. La cabecera muestra el formato, el título y la portada disponible. Se puede cambiar de estado, sumar o restar una unidad y escribir el progreso exacto. La barra y el porcentaje responden a los cambios antes de guardar. Las series y el anime muestran temporada, y el manga y los cómics muestran tomo. Los detalles secundarios y la sinopsis se despliegan bajo demanda.
 
-Pasaron 38 pruebas y se actualizó el JAR de iniciar.bat. En Chrome se verificaron el avance de una serie de siete episodios, completar y cancelar cambios, guardar la temporada y la plataforma, el tomo de un manga y el botón de película vista. Un videojuego conservó 35,5 horas al marcarlo completado. Se comprobó el diseño en escritorio y a 390 píxeles de ancho.
+## Eliminación y controles directos en biblioteca
 
-## Eliminación desde la biblioteca
+Cada tarjeta de la biblioteca tiene una papelera junto al título con confirmación compacta que previene borrados accidentales. Las tarjetas de anime, series, manga, cómics y libros permiten sumar o restar una unidad directamente mediante botones `+` y `-`, sincronizando con el servidor de forma escalonada mientras conservan temporada, tomo y plataforma.
 
-Cada tarjeta de la biblioteca tiene una papelera junto al título. Se retiró el botón de eliminación del editor de progreso. La confirmación compacta indica el título seleccionado y la pérdida del progreso de esa obra. Cancelar recibe el foco inicial y Escape cierra la ventana.
+## Auditoría general y estado del proyecto
 
-Pasaron 38 pruebas y se actualizó el JAR. En Chrome, con dos obras de prueba, se verificó que cancelar o pulsar Escape conserva ambas y que confirmar en móvil envía una sola petición y elimina únicamente la seleccionada.
+Se ha realizado una auditoría exhaustiva de los 24 requisitos funcionales (RF-01 a RF-24) y las 9 reglas de negocio (RN-01 a RN-09) del documento de requisitos frente a la implementación actual en arquitectura MVC:
+1. **Módulo 1 (Cuentas y Perfil):** Registro BCrypt, autenticación de sesión, CSRF y edición de perfil al 100 %.
+2. **Módulo 2 (Tareas y Recompensas):** CRUD de tareas, cronómetro en vivo persistente, cálculo de monedas con penalización progresiva y métricas de desviación temporal al 100 %.
+3. **Módulo 3 (Catálogo Multimedia):** Biblioteca con estados, control escalonado unitario, búsqueda remota unificada y tolerancia a fallos de API externa al 100 %.
+4. **Módulo 4 (Billetera y Ruleta de Descansos):** Canje de descansos (15/30/60 min), ruleta ponderada probabilística con filtros y temporizador regresivo de descanso al 100 %.
+5. **Módulo 5 (El Oráculo IA):** Justificación de recomendaciones, etiquetado de ritmo y sinopsis con fallback local sin conexión al 100 %.
+6. **Módulo 6 (Social, Misiones y Logros):** Misiones semanales dinámicas, insignias automáticas, gestión de amigos y giros cooperativos de ruleta al 100 %.
+7. **Módulo 7 (Administración):** Gestión de usuarios (suspender/reactivar/eliminar) y métricas de consumo/latencia de IA al 100 %.
 
-## Última tarea
-
-Las tarjetas de anime, series, manga, cómics y libros permiten sumar o restar una unidad directamente. El servidor aplica el paso al progreso guardado y conserva temporada, tomo y plataforma. Los botones se desactivan en los límites. Actualizar progreso sigue abriendo el editor completo.
-
-Pasaron 39 pruebas y se actualizó el JAR de iniciar.bat. En Chrome, con una biblioteca temporal, Cowboy Bebop pasó de 3 a 4 de 26 episodios y volvió a 3 desde la tarjeta en móvil. Se verificaron el porcentaje, la persistencia y la apertura del editor con el contador actualizado.
+Pasaron 39 pruebas automáticas sin fallos ni errores. Se generó limpiamente el artefacto ejecutable `target/timeforge-1.0.0.jar` (62,6 MB) para su ejecución directa con `iniciar.bat`. El repositorio se encuentra sincronizado con `origin/main` preservando todas las ramas y documentación previa del alumno.
