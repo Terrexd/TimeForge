@@ -26,7 +26,9 @@ public class Descanso extends EntidadBase {
     public Instant endsAt;
     public boolean completed;
     public boolean cancelled;
-    public boolean paused;
-    public int remainingSeconds;
+    @jakarta.persistence.Column(columnDefinition = "boolean default false")
+    public boolean paused = false;
+    @jakarta.persistence.Column(columnDefinition = "integer default 0")
+    public int remainingSeconds = 0;
     public Long partnerId;
 }

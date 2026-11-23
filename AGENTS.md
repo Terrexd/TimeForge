@@ -40,7 +40,9 @@ Cada tarjeta de la biblioteca tiene una papelera junto al título con confirmaci
 
 Se incorporó la posibilidad de pausar y reanudar los descansos activos. Al pausar, se congelan los segundos restantes en el servidor y la interfaz entra en estado pausado (mostrando etiqueta `EN PAUSA`, temporizador en ámbar y botón `▷ Reanudar descanso`). Al reanudar, se recalcula la fecha de fin a partir del tiempo restante exacto. El banner superior global también permite pausar o reanudar el descanso desde cualquier sección de la aplicación sin perder tiempo ni monedas.
 
-Pasaron 40 pruebas automáticas (incluyendo la nueva prueba de pausa y reanudación). Se recompiló el artefacto ejecutable `target/timeforge-1.0.0.jar` (62,6 MB).
+## Migración de esquema en descansos
+
+Tras incorporar los campos de pausa, la tabla `rest_session` de la base de datos local H2 requirió la migración explícita de las columnas `paused` (booleano con valor por defecto false) y `remaining_seconds` (entero con valor por defecto 0). Se agregaron las anotaciones `@Column(columnDefinition = ...)` en `Descanso.java` y se validó con una prueba automatizada autenticada que todos los endpoints del sistema (`/me`, `/tasks`, `/catalog`, `/rests`, `/missions`, `/friends`, `/wallet`) responden correctamente con código 200 OK.
 
 ## Auditoría general y estado del proyecto
 
