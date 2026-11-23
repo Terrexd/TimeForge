@@ -130,6 +130,10 @@ function tarjetaObra(p) {
   const objetivo = juego ? w.horasHistoriaPrincipal : w.totalUnits;
   const horas = objetivo?.toLocaleString("es-ES");
   const etiqueta = juego ? `${p.currentUnits} h jugadas` : `${p.currentUnits} / ${w.totalUnits} ${units(w.type)}`;
+  const unidad = ["SERIES", "ANIME"].includes(w.type) ? "episodio" : "capítulo";
+  const pasos = juego || w.type === "MOVIE" ? "" : `<div class="pasos-tarjeta">
+    <button type="button" data-action="paso-obra" data-id="${p.id}" data-incremento="-1" aria-label="Restar un ${unidad} de ${esc(w.title)}" ${p.currentUnits <= 0 ? "disabled" : ""}>−</button>
+    <button type="button" data-action="paso-obra" data-id="${p.id}" data-incremento="1" aria-label="Sumar un ${unidad} de ${esc(w.title)}" ${p.currentUnits >= w.totalUnits ? "disabled" : ""}>+</button></div>`;
   let porcentaje = 0;
   if (objetivo) porcentaje = p.state === "COMPLETED" ? 100 : Math.min(100, Math.round(100 * p.currentUnits / objetivo));
   const barra = objetivo ? `<progress value="${porcentaje}" max="100"></progress>` : "";
@@ -141,7 +145,7 @@ function tarjetaObra(p) {
       .map((s) => s[0])
       .slice(0, 3)
       .join(""),
-  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><div class="titulo-tarjeta"><h3>${esc(w.title)}</h3><button type="button" class="papelera-obra" data-action="delete-work" data-id="${p.id}" aria-label="Eliminar ${esc(w.title)} de tu biblioteca" title="Eliminar de la biblioteca">${icon("trash")}</button></div><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="progress-label"><span>${etiqueta}</span>${objetivo ? `<strong>${porcentaje}%</strong>` : ""}</div>${barra}<p>${duracion}${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
+  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><div class="titulo-tarjeta"><h3>${esc(w.title)}</h3><button type="button" class="papelera-obra" data-action="delete-work" data-id="${p.id}" aria-label="Eliminar ${esc(w.title)} de tu biblioteca" title="Eliminar de la biblioteca">${icon("trash")}</button></div><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="contador-tarjeta"><div class="progress-label" aria-live="polite"><span>${etiqueta}</span>${objetivo ? `<strong>${porcentaje}%</strong>` : ""}</div>${pasos}</div>${barra}<p>${duracion}${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
 }
 function pantallaCatalogo() {
   let list = S.catalog.filter(

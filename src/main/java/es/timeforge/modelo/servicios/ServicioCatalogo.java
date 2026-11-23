@@ -104,8 +104,27 @@ public class ServicioCatalogo {
         p.volume = input.volume();
         p.season = input.season();
         p.platform = input.platform() == null ? "" : input.platform();
+        return registrarProgreso(a, p);
+    }
+
+    public Progreso ajustarCapitulo(long user, long id, int paso) {
+        require(paso == 1 || paso == -1, "Solo puedes sumar o restar una unidad");
+        var a = accounts.locked(user);
+        var p = owned(user, id);
+        require(p.work.type != TipoMedio.GAME && p.work.type != TipoMedio.MOVIE,
+                "Esta obra no se registra por capítulos o episodios");
+        double cantidad = Math.clamp(p.currentUnits + paso, 0, p.work.totalUnits);
+        if (cantidad == p.currentUnits) return p;
+        p.currentUnits = cantidad;
+        if (cantidad == p.work.totalUnits) p.state = EstadoProgreso.COMPLETED;
+        else if (cantidad == 0) p.state = EstadoProgreso.PENDING;
+        else if (p.state != EstadoProgreso.PAUSED) p.state = EstadoProgreso.IN_PROGRESS;
+        return registrarProgreso(a, p);
+    }
+
+    private Progreso registrarProgreso(Usuario a, Progreso p) {
         p.lastInteraction = clock.instant();
-        missions.update(user, p);
+        missions.update(a.id, p);
         achievements.evaluate(a);
         return p;
     }

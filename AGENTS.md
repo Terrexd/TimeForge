@@ -36,8 +36,14 @@ Se rediseñó el editor de progreso de la biblioteca. La cabecera muestra el for
 
 Pasaron 38 pruebas y se actualizó el JAR de iniciar.bat. En Chrome se verificaron el avance de una serie de siete episodios, completar y cancelar cambios, guardar la temporada y la plataforma, el tomo de un manga y el botón de película vista. Un videojuego conservó 35,5 horas al marcarlo completado. Se comprobó el diseño en escritorio y a 390 píxeles de ancho.
 
-## Última tarea
+## Eliminación desde la biblioteca
 
 Cada tarjeta de la biblioteca tiene una papelera junto al título. Se retiró el botón de eliminación del editor de progreso. La confirmación compacta indica el título seleccionado y la pérdida del progreso de esa obra. Cancelar recibe el foco inicial y Escape cierra la ventana.
 
 Pasaron 38 pruebas y se actualizó el JAR. En Chrome, con dos obras de prueba, se verificó que cancelar o pulsar Escape conserva ambas y que confirmar en móvil envía una sola petición y elimina únicamente la seleccionada.
+
+## Última tarea
+
+Las tarjetas de anime, series, manga, cómics y libros permiten sumar o restar una unidad directamente. El servidor aplica el paso al progreso guardado y conserva temporada, tomo y plataforma. Los botones se desactivan en los límites. Actualizar progreso sigue abriendo el editor completo.
+
+Pasaron 39 pruebas y se actualizó el JAR de iniciar.bat. En Chrome, con una biblioteca temporal, Cowboy Bebop pasó de 3 a 4 de 26 episodios y volvió a 3 desde la tarjeta en móvil. Se verificaron el porcentaje, la persistencia y la apertura del editor con el contador actualizado.

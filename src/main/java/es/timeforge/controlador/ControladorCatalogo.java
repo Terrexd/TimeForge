@@ -70,6 +70,11 @@ public class ControladorCatalogo {
         return catalog.update(user(principal), id, input);
     }
 
+    @PostMapping("/catalog/{id}/paso")
+    public Progreso ajustarCapitulo(Principal principal, @PathVariable long id, @RequestParam int paso) {
+        return catalog.ajustarCapitulo(user(principal), id, paso);
+    }
+
     /** Elimina una obra del backlog personal del usuario. */
     @DeleteMapping("/catalog/{id}")
     public void eliminarObra(Principal principal, @PathVariable long id) {

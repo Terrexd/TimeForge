@@ -161,6 +161,22 @@ document.addEventListener("click", async (event) => {
   try {
     let close = true;
     switch (action) {
+      case "paso-obra": {
+        const paso = b.dataset.incremento;
+        const actualizado = await api(`/catalog/${id}/paso?paso=${paso}`, "POST");
+        S.catalog = S.catalog.map(p => p.id === actualizado.id ? actualizado : p);
+        const tarjeta = $(`[data-action="edit-progress"][data-id="${id}"]`)?.closest(".work-card");
+        if (tarjeta) {
+          tarjeta.outerHTML = tarjetaObra(actualizado);
+          if (document.activeElement === document.body && !$("#modal").open) {
+            const botones = `[data-action="paso-obra"][data-id="${id}"]`;
+            const siguiente = $(botones + `[data-incremento="${paso}"]:enabled`) || $(botones + ":enabled");
+            siguiente?.focus({preventScroll: true});
+          }
+        }
+        close = false;
+        break;
+      }
       case "confirm-delete-task":
         await api("/tasks/" + id, "DELETE");
         break;

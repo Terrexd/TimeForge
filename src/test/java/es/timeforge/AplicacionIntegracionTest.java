@@ -195,6 +195,24 @@ class AplicacionIntegracionTest {
     }
 
     @Test
+    void pasosEnLaTarjetaRespetanLimitesYConservanLosDetalles() throws Exception {
+        var usuario = account();
+        var sesion = login(usuario);
+        var p = catalog.add(usuario.id, new DatosObra("Cowboy Bebop", TipoMedio.ANIME, "", "", 26, 24, false));
+        catalog.update(usuario.id, p.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 25, 0, 1, "TV"));
+        String ruta = "/api/catalog/" + p.id + "/paso";
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post(ruta).session(sesion).with(csrf()).param("paso", "1"))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$.currentUnits").value(26))
+                    .andExpect(jsonPath("$.state").value("COMPLETED"));
+        }
+        mvc.perform(post(ruta).session(sesion).with(csrf()).param("paso", "-1"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.currentUnits").value(25))
+                .andExpect(jsonPath("$.state").value("IN_PROGRESS")).andExpect(jsonPath("$.season").value(1))
+                .andExpect(jsonPath("$.platform").value("TV"));
+    }
+
+    @Test
     void explorarSeriesSinTituloYAnadirConDuracionYEpisodios() throws Exception {
         var sesion = login(account());
         mvc.perform(get("/api/catalog/search").session(sesion).param("source", "CINE_SERIES"))
