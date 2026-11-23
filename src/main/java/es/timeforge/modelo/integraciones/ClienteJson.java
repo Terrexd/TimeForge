@@ -18,7 +18,7 @@ public class ClienteJson {
     }
 
     public JsonNode get(String uri) throws Exception {
-        return send(HttpRequest.newBuilder(URI.create(uri)).timeout(Duration.ofSeconds(2)).GET().build());
+        return send(HttpRequest.newBuilder(URI.create(uri)).timeout(Duration.ofSeconds(8)).GET().build());
     }
 
     public JsonNode post(String uri, String key, Object body) throws Exception {
@@ -59,7 +59,7 @@ public class ClienteJson {
         String host = uri.getHost();
         if (!"https".equals(uri.getScheme()) || host == null || !(host.equals("cdn.myanimelist.net")
                 || host.equals("cdn.akamai.steamstatic.com") || host.equals("shared.akamai.steamstatic.com")
-                || host.equals("images.igdb.com") || host.equals("media.rawg.io") || host.endsWith("anilist.co")))
+                || host.equals("images.igdb.com") || host.endsWith("anilist.co")))
             return null;
         var response = client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),
                 HttpResponse.BodyHandlers.ofByteArray());

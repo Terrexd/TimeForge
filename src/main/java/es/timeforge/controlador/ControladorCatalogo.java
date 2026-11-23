@@ -82,7 +82,7 @@ public class ControladorCatalogo {
         return oracle.classify(user(principal), id);
     }
 
-    /** Busca obras en catálogos remotos (RAWG para juegos, Jikan/AniList para manga y anime). */
+    /** Busca obras en catálogos remotos (IGDB o Steam para juegos, Jikan/AniList para manga y anime). */
     @GetMapping("/catalog/search")
     public List<Map<String, Object>> buscarObrasExternas(Principal principal, @RequestParam String source,
             @RequestParam String q) {

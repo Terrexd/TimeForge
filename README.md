@@ -12,32 +12,13 @@ Con un JDK 21 o superior, abre PowerShell en la carpeta del proyecto y ejecuta:
 
 Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución descarga las dependencias de Maven. Por defecto se utiliza H2 y los datos se guardan en `.data/`. El perfil `mysql` permite usar MySQL con los ajustes de `application-mysql.properties`.
 
-## Añadir videojuegos desde IGDB
+## Añadir videojuegos
 
-IGDB relaciona cada portada y el tiempo medio hasta los créditos con el identificador del juego. Registra una aplicación en la [consola de desarrolladores de Twitch](https://dev.twitch.tv/console/apps), genera su secreto y guarda ambas credenciales en el archivo local `.env` junto a `iniciar.bat`.
+Abre **Biblioteca de ocio → Buscar online**, escribe el título en **Videojuegos** y pulsa **Añadir**. Funciona con la tienda pública de Steam desde el primer arranque. La biblioteca guarda la portada disponible y muestra la estimación de la historia principal. Las horas jugadas se registran por separado.
 
-```properties
-IGDB_CLIENT_ID=tu_identificador
-IGDB_CLIENT_SECRET=tu_secreto
-```
+Como opción de servidor, puedes registrar una aplicación en la [consola de Twitch](https://dev.twitch.tv/console/apps) y definir `IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET` en el archivo local `.env`. Al reiniciar, el mismo buscador consulta IGDB y obtiene la duración por identificador. Si faltan credenciales o falla la consulta a IGDB, busca en Steam.
 
-Reinicia TimeForge y abre **Biblioteca de ocio → Buscar online → Videojuegos · IGDB**. Busca el título y pulsa **Añadir** en la edición que juegas. La biblioteca guarda la imagen y las horas de campaña disponibles. Si ya tenías una ficha con el mismo título, al importarla desde IGDB conservas tu progreso. Si IGDB aún no tiene tiempos, se consulta el catálogo local de HowLongToBeat. Cuando ambas fuentes carecen de datos, la tarjeta muestra «Sin estimación».
-
-## Añadir videojuegos desde RAWG
-
-Obtén tu clave en [RAWG](https://rawg.io/apidocs). En la carpeta de `iniciar.bat`, crea o abre el archivo `.env` y guarda una línea con tu clave, sin comillas. Git ignora este archivo.
-
-```properties
-RAWG_API_KEY=tu_clave_aqui
-```
-
-Cierra el servidor si está abierto y vuelve a ejecutar `iniciar.bat`. En **Biblioteca de ocio → Buscar online**, selecciona **Videojuegos · RAWG**, escribe el título y pulsa **Buscar**. Pulsa **Añadir** junto al resultado para guardarlo en tu biblioteca.
-
-## Portadas y horas de los videojuegos
-
-La biblioteca muestra las horas jugadas y una estimación de la historia principal. Puedes registrar más horas que la estimación o marcar el juego como completado si terminas antes. Si el título carece de una coincidencia única, aparece «Sin estimación».
-
-Las duraciones se consultan por título en una copia local de los campos de nombre y horas de campaña del [catálogo de HowLongToBeat recopilado para LaunchBox](https://github.com/johagan94/hltb-dataset-plugin/tree/main/dataset). La portada se guarda al importar desde RAWG. Al abrir una ficha antigua o manual sin imagen, el servidor intenta recuperarla y la conserva para las siguientes visitas. Para juegos disponibles en Steam puede usar la imagen de su tienda.
+Para juegos de Steam y fichas sin duración en IGDB, TimeForge consulta una copia local del [catálogo de HowLongToBeat recopilado para LaunchBox](https://github.com/johagan94/hltb-dataset-plugin/tree/main/dataset). Si falta una estimación fiable, muestra «Sin estimación».
 
 ## Dónde está cada cosa
 

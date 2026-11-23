@@ -24,9 +24,13 @@ public class CatalogoIgdb {
         this.secreto = secreto.strip();
     }
 
+    public boolean configurado() {
+        return !identificador.isEmpty() && !secreto.isEmpty();
+    }
+
     private synchronized String token() throws Exception {
-        if (identificador.isEmpty() || secreto.isEmpty())
-            throw new ErrorNegocio(503, "Configura IGDB_CLIENT_ID e IGDB_CLIENT_SECRET en .env y reinicia TimeForge.");
+        if (!configurado())
+            throw new ErrorNegocio(503, "IGDB no está disponible. Vuelve a buscar el juego.");
         if (Instant.now().isAfter(caducidad)) {
             var respuesta = cliente.tokenTwitch(identificador, secreto);
             token = respuesta.path("access_token").asText("");

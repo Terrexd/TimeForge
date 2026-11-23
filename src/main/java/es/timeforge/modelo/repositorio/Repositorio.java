@@ -104,8 +104,8 @@ public class Repositorio {
                 .stream().findFirst().orElse(null);
     }
 
-    public Obra buscarJuegoIgdb(String id) {
-        return consultar(Obra.class, "from Obra where source = 'IGDB' and externalId = ?1", id)
+    public Obra buscarJuegoExterno(String fuente, String id) {
+        return consultar(Obra.class, "from Obra where source = ?1 and externalId = ?2", fuente, id)
                 .stream().findFirst().orElse(null);
     }
 

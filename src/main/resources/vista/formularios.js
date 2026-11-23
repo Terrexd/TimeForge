@@ -50,7 +50,7 @@ function formularioProgreso(id) {
 function buscarObrasExternas() {
   modal(
     "Descubre tu próxima historia",
-    `<form id="external-search"><div class="form-grid"><label class="field">Catálogo<select name="source"><option value="JIKAN_ANIME">Anime · Jikan</option><option value="JIKAN_MANGA">Manga · Jikan</option><option value="IGDB">Videojuegos · IGDB</option><option value="RAWG">Videojuegos · RAWG</option></select></label>${field("Título", "q", "", 'required minlength="2" maxlength="100"')}</div>${actions("Buscar")}</form><div class="search-results" id="external-results"></div>`,
+    `<form id="external-search"><div class="form-grid"><label class="field">Catálogo<select name="source"><option value="VIDEOJUEGOS">Videojuegos</option><option value="JIKAN_ANIME">Anime</option><option value="JIKAN_MANGA">Manga</option></select></label>${field("Título", "q", "", 'required minlength="2" maxlength="100"')}</div>${actions("Buscar")}</form><div class="search-results" id="external-results"></div>`,
   );
 }
 function buscarAmigo() {

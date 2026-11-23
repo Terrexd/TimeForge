@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:timeforge_test;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.jpa.hibernate.ddl-auto=create-drop", "timeforge.gemini-key=", "timeforge.admin-user=",
-        "timeforge.admin-password=", "timeforge.rawg-key=clave-de-prueba",
+        "timeforge.admin-password=",
         "IGDB_CLIENT_ID=cliente-prueba", "IGDB_CLIENT_SECRET=secreto-prueba" })
 @AutoConfigureMockMvc
 @Import(AplicacionIntegracionTest.TestTime.class)
@@ -76,6 +76,7 @@ class AplicacionIntegracionTest {
                     assertEquals("games", recurso);
                     String juego = "{\"id\":101,\"name\":\"Juego sin coincidencia local\",\"cover\":{\"image_id\":\"portada101\"}}";
                     if (consulta.contains("where id = 101;")) return json.readTree("[" + juego + "]");
+                    if (consulta.contains("Cyberpunk")) throw new java.io.IOException("IGDB fuera de servicio");
                     assertTrue(consulta.contains("search \"Juego\";"));
                     return json.readTree("[" + juego + ",{\"id\":102,\"name\":\"Juego sin campaña\"}]");
                 }
@@ -83,26 +84,18 @@ class AplicacionIntegracionTest {
                 @Override
                 public JsonNode get(String url) throws Exception {
                     return switch (url) {
-                    case "https://api.rawg.io/api/games?page_size=12&search=Hollow+Knight&key=clave-de-prueba" ->
-                        json.readTree("""
-                            {"results":[{"id":9767,"name":"Hollow Knight","short_screenshots":[{"id":1,"image":"https://media.rawg.io/test.jpg"}]}]}
-                            """);
-                    case "https://api.rawg.io/api/games/9767?key=clave-de-prueba" ->
-                        json.readTree("""
-                            {"name":"Hollow Knight","genres":[{"name":"Adventure"}],"playtime":27}
-                            """);
                     case "https://store.steampowered.com/api/storesearch/?term=Cyberpunk+2077&l=english&cc=US" ->
                         json.readTree("""
                             {"items":[{"id":1091500,"name":"Cyberpunk 2077"}]}
-                            """);
-                    case "https://api.rawg.io/api/games/1970?key=clave-de-prueba" ->
-                        json.readTree("""
-                            {"name":"Assassin's Creed Unity","background_image":null}
                             """);
                     case "https://store.steampowered.com/api/storesearch/?term=Assassin%27s+Creed+Unity&l=english&cc=US" ->
                         json.readTree("""
                             {"items":[{"id":324331,"name":"Assassin’s Creed Unity Revolutionary Armaments Pack"},
                                       {"id":289650,"name":"Assassin's Creed® Unity"}]}
+                            """);
+                    case "https://store.steampowered.com/api/appdetails?appids=1091500&l=english&cc=US" ->
+                        json.readTree("""
+                            {"1091500":{"success":true,"data":{"name":"Cyberpunk 2077","genres":[{"description":"RPG"}]}}}
                             """);
                     default -> throw new AssertionError("Petición inesperada al catálogo de prueba");
                     };
@@ -193,13 +186,13 @@ class AplicacionIntegracionTest {
     }
 
     @Test
-    void buscarJuegoRawgYGuardarloEnLaBiblioteca() throws Exception {
+    void buscarVideojuegoEImportarloCuandoFallaIgdb() throws Exception {
         var sesion = login(account());
         var resultado = mvc.perform(get("/api/catalog/search").session(sesion)
-                .param("source", "RAWG").param("q", "Hollow Knight"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("Hollow Knight"))
-                .andExpect(jsonPath("$[0].imagen").value("https://media.rawg.io/test.jpg"))
-                .andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(27.0))
+                .param("source", "VIDEOJUEGOS").param("q", "Cyberpunk 2077"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("Cyberpunk 2077"))
+                .andExpect(jsonPath("$[0].imagen").value("https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg"))
+                .andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(26.0))
                 .andReturn();
         var juego = body(resultado).get(0);
         String seleccion = json.writeValueAsString(Map.of("source", juego.get("source").asText(),
@@ -207,10 +200,10 @@ class AplicacionIntegracionTest {
         mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
                 .contentType("application/json").content(seleccion)).andExpect(status().isOk());
         mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].work.title").value("Hollow Knight"))
-                .andExpect(jsonPath("$[0].work.source").value("RAWG"))
+                .andExpect(jsonPath("$[0].work.title").value("Cyberpunk 2077"))
+                .andExpect(jsonPath("$[0].work.source").value("STEAM"))
                 .andExpect(jsonPath("$[0].work.type").value("GAME"))
-                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(27.0));
+                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(26.0));
     }
 
     @Test
@@ -220,7 +213,7 @@ class AplicacionIntegracionTest {
         var progreso = catalog.add(usuario.id, new DatosObra("Juego sin coincidencia local", TipoMedio.GAME,
                 "", "", 0, 60, false));
         catalog.update(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 4, 0, 0, ""));
-        mvc.perform(get("/api/catalog/search").session(sesion).param("source", "IGDB").param("q", "Juego"))
+        mvc.perform(get("/api/catalog/search").session(sesion).param("source", "VIDEOJUEGOS").param("q", "Juego"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(12.5))
                 .andExpect(jsonPath("$[1].horasHistoriaPrincipal").doesNotExist());
         mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
@@ -236,11 +229,11 @@ class AplicacionIntegracionTest {
 
     @Test
     void unityImportadoMuestraDuracionYGuardaLaPortadaAlAbrirSuTarjeta() throws Exception {
-        var sesion = login(account());
-        var respuesta = mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
-                .contentType("application/json").content("{\"source\":\"RAWG\",\"externalId\":1970}"))
-                .andExpect(status().isOk()).andReturn();
-        long id = body(respuesta).path("work").path("id").asLong();
+        var usuario = account();
+        var sesion = login(usuario);
+        var anterior = catalog.addImported(usuario.id, new DatosObra("Assassin's Creed Unity", TipoMedio.GAME,
+                "", "", 0, 60, false), "RAWG", "1970", null, null);
+        long id = anterior.work.id;
         mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(17.2));
         mvc.perform(get("/api/covers/" + id).session(sesion)).andExpect(status().isOk())

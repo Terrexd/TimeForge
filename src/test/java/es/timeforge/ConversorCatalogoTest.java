@@ -37,6 +37,6 @@ class ConversorCatalogoTest {
     @Test
     void invalidRemoteResponseDoesNotCreateBlankWork() throws Exception {
         var response = json.readTree("{}");
-        assertThrows(ErrorNegocio.class, () -> ConversorCatalogo.map("RAWG", response));
+        assertThrows(ErrorNegocio.class, () -> ConversorCatalogo.map("STEAM", response));
     }
 }

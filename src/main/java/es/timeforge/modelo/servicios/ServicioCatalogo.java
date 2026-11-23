@@ -42,12 +42,12 @@ public class ServicioCatalogo {
             String coverType, Double horasCampana) {
         var a = accounts.locked(user);
         String normalized = input.title().trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
-        boolean igdb = "IGDB".equals(source);
-        Obra w = igdb ? repositorio.buscarJuegoIgdb(externalId) : null;
+        boolean juegoExterno = "IGDB".equals(source) || "STEAM".equals(source);
+        Obra w = juegoExterno ? repositorio.buscarJuegoExterno(source, externalId) : null;
         if (w == null) {
             w = repositorio.buscarObra(normalized, input.type());
-            if (igdb && w != null && "IGDB".equals(w.source) && !externalId.equals(w.externalId)) {
-                normalized += " [igdb " + externalId + "]";
+            if (juegoExterno && w != null && source.equals(w.source) && !externalId.equals(w.externalId)) {
+                normalized += " [" + source.toLowerCase(Locale.ROOT) + " " + externalId + "]";
                 w = null;
             }
         }
@@ -66,7 +66,7 @@ public class ServicioCatalogo {
             w.cover = cover;
             w.coverType = coverType;
             repositorio.guardar(w);
-        } else if (!source.equals("MANUAL") && (igdb || !"IGDB".equals(w.source))) {
+        } else if (!source.equals("MANUAL") && ("IGDB".equals(source) || !"IGDB".equals(w.source))) {
             w.synopsis = input.synopsis();
             w.genres = input.genres();
             w.source = source;
@@ -79,7 +79,7 @@ public class ServicioCatalogo {
         long workId = w.id;
         if (horasCampana != null) w.horasCampanaImportadas = horasCampana;
         var existente = repositorio.catalogoPersonal(user).stream().filter(p -> p.work.id == workId).findFirst();
-        if ("IGDB".equals(source) && existente.isPresent()) return existente.get();
+        if (juegoExterno && existente.isPresent()) return existente.get();
         require(existente.isEmpty(),
                 "Esta obra ya existe en tu catálogo. Edita su estado o progreso desde tu lista");
         var p = new Progreso();
