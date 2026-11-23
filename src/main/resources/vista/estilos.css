@@ -1012,6 +1012,9 @@ progress::-webkit-progress-value {
   margin: 12px 0;
   font-variant-numeric: tabular-nums;
 }
+.countdown.paused {
+  color: var(--gold);
+}
 .mission-card {
   display: flex;
   flex-direction: column;
@@ -1403,6 +1406,13 @@ dialog h2 {
 .timer-banner strong {
   color: var(--cyan);
   font-variant-numeric: tabular-nums;
+}
+.timer-banner.paused {
+  border-color: #f59e0b44;
+  background: #2b221077;
+}
+.timer-banner.paused strong {
+  color: var(--gold);
 }
 .sr-only {
   position: absolute;

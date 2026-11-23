@@ -59,11 +59,17 @@ public class ControladorDescansos {
         return rests.spin(user(principal), input.minutes(), null);
     }
 
-    /** Finaliza o cancela una sesión de descanso en curso. */
+    /** Gestiona una sesión de descanso en curso: pause, resume, cancel o finish. */
     @PostMapping("/rests/{id}/{action}")
-    public Descanso finalizarDescanso(Principal principal, @PathVariable long id, @PathVariable String action) {
-        ErrorNegocio.require(action.equals("cancel") || action.equals("finish"), "Acción desconocida");
-        return rests.finish(user(principal), id, action.equals("cancel"));
+    public Descanso gestionarDescanso(Principal principal, @PathVariable long id, @PathVariable String action) {
+        long userId = user(principal);
+        return switch (action) {
+            case "pause" -> rests.pause(userId, id);
+            case "resume" -> rests.resume(userId, id);
+            case "cancel" -> rests.finish(userId, id, true);
+            case "finish" -> rests.finish(userId, id, false);
+            default -> throw new ErrorNegocio("Acción de descanso desconocida");
+        };
     }
 
     /** Consulta la justificación contextual generada por «El Oráculo» (IA) para un descanso. */

@@ -96,7 +96,7 @@ const elapsed = (t) =>
 const activeTask = () => S.tasks.find((t) => t.state === "RUNNING");
 const activeRest = () =>
   S.rests.find(
-    (r) => !r.cancelled && !r.completed && Date.parse(r.endsAt) > now(),
+    (r) => !r.cancelled && !r.completed && (r.paused || Date.parse(r.endsAt) > now()),
   );
 function toast(message, error = false) {
   const el = $("#toast");

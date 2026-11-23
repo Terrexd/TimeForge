@@ -116,7 +116,7 @@ public class Repositorio {
 
     public List<Descanso> descansosActivos(long user, Instant now) {
         return consultar(Descanso.class,
-                "from Descanso r join fetch r.work where r.owner.id = ?1 and r.cancelled = false and r.completed = false and r.endsAt > ?2",
+                "from Descanso r join fetch r.work where r.owner.id = ?1 and r.cancelled = false and r.completed = false and (r.paused = true or r.endsAt > ?2)",
                 user, now);
     }
 

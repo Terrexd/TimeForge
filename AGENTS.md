@@ -36,13 +36,19 @@ Se rediseñó el editor de progreso de la biblioteca. La cabecera muestra el for
 
 Cada tarjeta de la biblioteca tiene una papelera junto al título con confirmación compacta que previene borrados accidentales. Las tarjetas de anime, series, manga, cómics y libros permiten sumar o restar una unidad directamente mediante botones `+` y `-`, sincronizando con el servidor de forma escalonada mientras conservan temporada, tomo y plataforma.
 
+## Pausa y reanudación de descansos
+
+Se incorporó la posibilidad de pausar y reanudar los descansos activos. Al pausar, se congelan los segundos restantes en el servidor y la interfaz entra en estado pausado (mostrando etiqueta `EN PAUSA`, temporizador en ámbar y botón `▷ Reanudar descanso`). Al reanudar, se recalcula la fecha de fin a partir del tiempo restante exacto. El banner superior global también permite pausar o reanudar el descanso desde cualquier sección de la aplicación sin perder tiempo ni monedas.
+
+Pasaron 40 pruebas automáticas (incluyendo la nueva prueba de pausa y reanudación). Se recompiló el artefacto ejecutable `target/timeforge-1.0.0.jar` (62,6 MB).
+
 ## Auditoría general y estado del proyecto
 
-Se ha realizado una auditoría exhaustiva de los 24 requisitos funcionales (RF-01 a RF-24) y las 9 reglas de negocio (RN-01 a RN-09) del documento de requisitos frente a la implementación actual en arquitectura MVC:
+Se ha auditado el cumplimiento de los 24 requisitos funcionales (RF-01 a RF-24) y las 9 reglas de negocio (RN-01 a RN-09):
 1. **Módulo 1 (Cuentas y Perfil):** Registro BCrypt, autenticación de sesión, CSRF y edición de perfil al 100 %.
 2. **Módulo 2 (Tareas y Recompensas):** CRUD de tareas, cronómetro en vivo persistente, cálculo de monedas con penalización progresiva y métricas de desviación temporal al 100 %.
 3. **Módulo 3 (Catálogo Multimedia):** Biblioteca con estados, control escalonado unitario, búsqueda remota unificada y tolerancia a fallos de API externa al 100 %.
-4. **Módulo 4 (Billetera y Ruleta de Descansos):** Canje de descansos (15/30/60 min), ruleta ponderada probabilística con filtros y temporizador regresivo de descanso al 100 %.
+4. **Módulo 4 (Billetera y Ruleta de Descansos):** Canje de descansos (15/30/60 min), pausa/reanudación de descansos, ruleta ponderada probabilística con filtros y temporizador regresivo de descanso al 100 %.
 5. **Módulo 5 (El Oráculo IA):** Justificación de recomendaciones, etiquetado de ritmo y sinopsis con fallback local sin conexión al 100 %.
 6. **Módulo 6 (Social, Misiones y Logros):** Misiones semanales dinámicas, insignias automáticas, gestión de amigos y giros cooperativos de ruleta al 100 %.
 7. **Módulo 7 (Administración):** Gestión de usuarios (suspender/reactivar/eliminar) y métricas de consumo/latencia de IA al 100 %.

@@ -81,6 +81,8 @@ public class ServicioDescansos {
         r.cost = cost;
         r.startedAt = clock.instant();
         r.endsAt = r.startedAt.plusSeconds(minutes * 60L);
+        r.remainingSeconds = minutes * 60;
+        r.paused = false;
         r.partnerId = partner;
         repositorio.guardar(r);
         var rec = new Recomendacion();
@@ -94,14 +96,40 @@ public class ServicioDescansos {
         return r;
     }
 
+    public Descanso pause(long user, long id) {
+        accounts.locked(user);
+        var r = owned.rest(user, id);
+        require(!r.cancelled && !r.completed, "El descanso ya ha finalizado");
+        require(!r.paused, "El descanso ya está pausado");
+        int left = (int) Math.max(0, Duration.between(clock.instant(), r.endsAt).getSeconds());
+        require(left > 0, "El descanso ya ha finalizado");
+        r.paused = true;
+        r.remainingSeconds = left;
+        return r;
+    }
+
+    public Descanso resume(long user, long id) {
+        accounts.locked(user);
+        var r = owned.rest(user, id);
+        require(!r.cancelled && !r.completed, "El descanso ya ha finalizado");
+        require(r.paused, "El descanso no está pausado");
+        require(repositorio.tareas(user).stream().noneMatch(t -> t.state == EstadoTarea.RUNNING),
+                "Pausa la tarea activa antes de reanudar el descanso");
+        r.paused = false;
+        r.startedAt = clock.instant();
+        r.endsAt = clock.instant().plusSeconds(Math.max(1, r.remainingSeconds));
+        return r;
+    }
+
     public Descanso finish(long user, long id, boolean cancel) {
         accounts.locked(user);
         var r = owned.rest(user, id);
         if (r.cancelled || r.completed)
             return r;
-        require(cancel || !clock.instant().isBefore(r.endsAt), "El descanso todavía no ha terminado");
+        require(cancel || (!r.paused && !clock.instant().isBefore(r.endsAt)), "El descanso todavía no ha terminado");
         r.cancelled = cancel;
         r.completed = !cancel;
+        r.paused = false;
         return r;
     }
 
@@ -109,7 +137,7 @@ public class ServicioDescansos {
         accounts.locked(user);
         var rests = repositorio.descansos(user);
         for (var r : rests)
-            if (!r.cancelled && !clock.instant().isBefore(r.endsAt))
+            if (!r.cancelled && !r.completed && !r.paused && r.endsAt != null && !clock.instant().isBefore(r.endsAt))
                 r.completed = true;
         return rests;
     }

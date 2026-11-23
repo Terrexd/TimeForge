@@ -116,6 +116,34 @@ document.addEventListener("click", async (event) => {
     }
     return;
   }
+  if (action === "pause-rest") {
+    if (busy) return;
+    busy = true;
+    try {
+      await api("/rests/" + id + "/pause", "POST");
+      toast("Descanso pausado. ¡Puedes ausentarte sin perder tu tiempo!");
+      await refresh();
+    } catch (e) {
+      toast(e.message, true);
+    } finally {
+      busy = false;
+    }
+    return;
+  }
+  if (action === "resume-rest") {
+    if (busy) return;
+    busy = true;
+    try {
+      await api("/rests/" + id + "/resume", "POST");
+      toast("Descanso reanudado.");
+      await refresh();
+    } catch (e) {
+      toast(e.message, true);
+    } finally {
+      busy = false;
+    }
+    return;
+  }
   if (action === "delete-task")
     return confirmarAccion(
       "Borrar tarea",
@@ -427,10 +455,13 @@ function tick() {
   });
   document.querySelectorAll("[data-rest-clock]").forEach((el) => {
     const r = S.rests.find((r) => r.id === Number(el.dataset.restClock));
-    if (r) el.textContent = fmt((Date.parse(r.endsAt) - now()) / 1000);
+    if (r) {
+      const left = r.paused ? (r.remainingSeconds || 0) : Math.max(0, (Date.parse(r.endsAt) - now()) / 1000);
+      el.textContent = fmt(left) + (r.paused ? " (Pausado)" : "");
+    }
   });
   const expired = S.rests.find(
-    (r) => !r.cancelled && !r.completed && Date.parse(r.endsAt) <= now(),
+    (r) => !r.cancelled && !r.completed && !r.paused && Date.parse(r.endsAt) <= now(),
   );
   if (expired && lastRestAlert !== expired.id) {
     lastRestAlert = expired.id;

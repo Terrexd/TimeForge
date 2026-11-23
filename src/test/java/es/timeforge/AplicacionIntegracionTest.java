@@ -574,4 +574,34 @@ class AplicacionIntegracionTest {
         tasks.aplicarAccion(a.id, t.id, "start");
         assertTrue(rests.history(a.id).getFirst().completed);
     }
+
+    @Test
+    void restCanBePausedAndResumed() {
+        var a = account();
+        fund(a.id);
+        work(a.id, "Pausa" + a.id, 10);
+        var r = rests.spin(a.id, 15, null);
+        assertFalse(r.paused);
+        assertEquals(900, r.remainingSeconds);
+
+        // Avanzamos 300 segundos y pausamos
+        clock.advance(300);
+        var paused = rests.pause(a.id, r.id);
+        assertTrue(paused.paused);
+        assertEquals(600, paused.remainingSeconds);
+
+        // El tiempo avanza mientras está pausado y no debe expirar
+        clock.advance(1000);
+        var history = rests.history(a.id);
+        assertFalse(history.getFirst().completed);
+        assertTrue(history.getFirst().paused);
+
+        // Reanudar el descanso
+        var resumed = rests.resume(a.id, r.id);
+        assertFalse(resumed.paused);
+
+        // Terminar el descanso restante
+        clock.advance(600);
+        assertTrue(rests.history(a.id).getFirst().completed);
+    }
 }

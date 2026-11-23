@@ -26,5 +26,7 @@ public class Descanso extends EntidadBase {
     public Instant endsAt;
     public boolean completed;
     public boolean cancelled;
+    public boolean paused;
+    public int remainingSeconds;
     public Long partnerId;
 }
