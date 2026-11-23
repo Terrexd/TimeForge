@@ -85,7 +85,7 @@ public class ControladorCatalogo {
     /** Busca obras en catálogos remotos (IGDB o Steam para juegos, Jikan/AniList para manga y anime). */
     @GetMapping("/catalog/search")
     public List<Map<String, Object>> buscarObrasExternas(Principal principal, @RequestParam String source,
-            @RequestParam String q) {
+            @RequestParam(defaultValue = "") String q) {
         user(principal);
         return external.search(source, q);
     }

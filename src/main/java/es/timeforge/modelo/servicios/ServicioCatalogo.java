@@ -42,11 +42,11 @@ public class ServicioCatalogo {
             String coverType, Double horasCampana) {
         var a = accounts.locked(user);
         String normalized = input.title().trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
-        boolean juegoExterno = "IGDB".equals(source) || "STEAM".equals(source);
-        Obra w = juegoExterno ? repositorio.buscarJuegoExterno(source, externalId) : null;
+        boolean externa = !"MANUAL".equals(source);
+        Obra w = externa ? repositorio.buscarObraExterna(source, externalId) : null;
         if (w == null) {
             w = repositorio.buscarObra(normalized, input.type());
-            if (juegoExterno && w != null && source.equals(w.source) && !externalId.equals(w.externalId)) {
+            if (externa && w != null && source.equals(w.source) && !externalId.equals(w.externalId)) {
                 normalized += " [" + source.toLowerCase(Locale.ROOT) + " " + externalId + "]";
                 w = null;
             }
@@ -79,7 +79,7 @@ public class ServicioCatalogo {
         long workId = w.id;
         if (horasCampana != null) w.horasCampanaImportadas = horasCampana;
         var existente = repositorio.catalogoPersonal(user).stream().filter(p -> p.work.id == workId).findFirst();
-        if (juegoExterno && existente.isPresent()) return existente.get();
+        if (externa && existente.isPresent()) return existente.get();
         require(existente.isEmpty(),
                 "Esta obra ya existe en tu catálogo. Edita su estado o progreso desde tu lista");
         var p = new Progreso();

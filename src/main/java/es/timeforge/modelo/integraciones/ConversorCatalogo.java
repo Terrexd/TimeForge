@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 /** Adaptación pura de IGDB, Steam y Jikan al dominio, independiente de HTTP y persistencia. */
 public final class ConversorCatalogo {
-    private static final Pattern HOURS = Pattern.compile("(\\d+)\\s*hr");
+    private static final Pattern HOURS = Pattern.compile("(\\d+)\\s*h");
     private static final Pattern MINUTES = Pattern.compile("(\\d+)\\s*min");
 
     private ConversorCatalogo() {
@@ -22,7 +22,7 @@ public final class ConversorCatalogo {
         boolean igdb = source.equals("IGDB");
         boolean steam = source.equals("STEAM");
         boolean game = igdb || steam;
-        boolean manga = source.equals("JIKAN_MANGA");
+        boolean manga = source.endsWith("_MANGA");
         JsonNode data = game ? response : response.path("data");
         String title = data.path(game ? "name" : "title").asText();
         ErrorNegocio.require(!title.isBlank(), "La ficha externa no contiene un título válido");
@@ -42,7 +42,7 @@ public final class ConversorCatalogo {
     }
 
     public static ImportedWork mapAniList(String source, JsonNode media) {
-        boolean manga = source.equals("JIKAN_MANGA");
+        boolean manga = source.endsWith("_MANGA");
         String title = media.path("title").path("english").asText("");
         if (title.isBlank())
             title = media.path("title").path("romaji").asText("");
@@ -54,7 +54,7 @@ public final class ConversorCatalogo {
         for (var g : media.path("genres"))
             genres.add(g.asText());
         int total = media.path(manga ? "chapters" : "episodes").asInt(1);
-        int duration = manga ? 10 : 24;
+        int duration = manga ? 10 : media.path("duration").asInt();
         String cover = media.path("coverImage").path("large").asText("");
         var input = new DatosObra(limit(title, 150), manga ? TipoMedio.MANGA : TipoMedio.ANIME,
                 limit(synopsis, 8000), limit(genres.toString(), 250), Math.max(1, total), duration, false);
@@ -62,6 +62,11 @@ public final class ConversorCatalogo {
     }
 
     public static int episodeMinutes(String value) {
+        int minutos = minutos(value);
+        return minutos > 0 ? minutos : 24;
+    }
+
+    static int minutos(String value) {
         var hours = HOURS.matcher(value);
         var minutes = MINUTES.matcher(value);
         int result = 0;
@@ -69,10 +74,10 @@ public final class ConversorCatalogo {
             result += Integer.parseInt(hours.group(1)) * 60;
         if (minutes.find())
             result += Integer.parseInt(minutes.group(1));
-        return result > 0 ? result : 24;
+        return result;
     }
 
-    private static String limit(String value, int length) {
+    static String limit(String value, int length) {
         return value.substring(0, Math.min(length, value.length()));
     }
 }

@@ -56,7 +56,7 @@ public class ConfiguracionSeguridad {
                     res.getWriter().write(
                             "{\"message\":\"Operación no autorizada o sesión caducada. Recarga la página\"}");
                 })).headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives(
-                        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.akamai.steamstatic.com https://images.igdb.com; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")));
+                        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.akamai.steamstatic.com https://shared.akamai.steamstatic.com https://images.igdb.com https://images.metahub.space https://cdn.myanimelist.net https://*.anilist.co; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")));
         return http.build();
     }
 }

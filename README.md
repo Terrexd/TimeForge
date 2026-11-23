@@ -12,6 +12,12 @@ Con un JDK 21 o superior, abre PowerShell en la carpeta del proyecto y ejecuta:
 
 Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución descarga las dependencias de Maven. Por defecto se utiliza H2 y los datos se guardan en `.data/`. El perfil `mysql` permite usar MySQL con los ajustes de `application-mysql.properties`.
 
+## Explorar el catálogo de ocio
+
+En **Biblioteca de ocio → Buscar online** aparecen sugerencias al abrir el catálogo y al cambiar entre videojuegos, anime, manga, series y películas. Desplázate por la lista o busca por título. Puedes añadir varias obras seguidas. Las filas guardadas muestran **Añadida**.
+
+Las fichas indican la campaña de un juego, los minutos por episodio de anime o serie, o la duración de una película cuando el proveedor la conoce. Para manga se estima la lectura a diez minutos por capítulo. Las series y películas proceden de Cinemeta. Anime y manga se consultan en AniList con Jikan como respaldo.
+
 ## Añadir videojuegos
 
 Abre **Biblioteca de ocio → Buscar online**, escribe el título en **Videojuegos** y pulsa **Añadir**. Funciona con la tienda pública de Steam desde el primer arranque. La biblioteca guarda la portada disponible y muestra la estimación de la historia principal. Las horas jugadas se registran por separado.

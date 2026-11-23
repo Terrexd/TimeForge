@@ -134,7 +134,7 @@ function tarjetaObra(p) {
   if (objetivo) porcentaje = p.state === "COMPLETED" ? 100 : Math.min(100, Math.round(100 * p.currentUnits / objetivo));
   const barra = objetivo ? `<progress value="${porcentaje}" max="100"></progress>` : "";
   const duracion = juego ? (objetivo ? `Historia principal · ≈ ${horas} h` : "Historia principal · Sin estimación")
-    : `${w.minutesPerUnit} min por unidad`;
+    : (w.minutesPerUnit ? `${w.minutesPerUnit} min${w.type === "MOVIE" ? "" : " por " + (["ANIME", "SERIES"].includes(w.type) ? "episodio" : "capítulo")}` : "Duración sin estimación");
   return `<article class="card work-card"><div class="poster ${w.type}"><img src="/api/covers/${w.id}" alt="" loading="lazy" data-cover><span class="tag">${types[w.type]}</span><strong class="initials">${esc(
     w.title
       .split(" ")
@@ -158,7 +158,7 @@ function pantallaCatalogo() {
     )
     .join(
       "",
-    )}</select><button data-action="search-external">⌕ Buscar online</button><button class="lime" data-action="new-work">＋ Añadir obra</button></div><div class="section-title"><div><span class="eyebrow">Mi colección</span><h2>Continúa donde lo dejaste</h2></div><small>${list.length} obras</small></div><div class="catalog-grid" id="catalog-grid">${list.map(tarjetaObra).join("")}</div>${!list.length ? `<div class="card">${empty("Tu biblioteca está por escribir", "Añade videojuegos, lecturas o series. Puedes registrarlos manualmente o buscarlos online.", `<button class="primary" data-action="new-work">Añadir mi primera obra</button>`)}</div>` : ""}<p class="footer-note">Catálogos externos: <a href="https://www.igdb.com" target="_blank" rel="noreferrer">IGDB</a>, <a href="https://store.steampowered.com" target="_blank" rel="noreferrer">Steam</a> y <a href="https://jikan.moe" target="_blank" rel="noreferrer">Jikan / MyAnimeList</a>. Las fichas importadas y sus portadas se guardan localmente.</p>`;
+    )}</select><button data-action="search-external">⌕ Buscar online</button><button class="lime" data-action="new-work">＋ Añadir obra</button></div><div class="section-title"><div><span class="eyebrow">Mi colección</span><h2>Continúa donde lo dejaste</h2></div><small>${list.length} obras</small></div><div class="catalog-grid" id="catalog-grid">${list.map(tarjetaObra).join("")}</div>${!list.length ? `<div class="card">${empty("Tu biblioteca está por escribir", "Añade videojuegos, lecturas o series. Puedes registrarlos manualmente o buscarlos online.", `<button class="primary" data-action="new-work">Añadir mi primera obra</button>`)}</div>` : ""}<p class="footer-note">Catálogos externos: <a href="https://www.igdb.com" target="_blank" rel="noreferrer">IGDB</a>, <a href="https://store.steampowered.com" target="_blank" rel="noreferrer">Steam</a>, Cinemeta, AniList y <a href="https://jikan.moe" target="_blank" rel="noreferrer">Jikan / MyAnimeList</a>. Las fichas importadas y sus portadas se guardan localmente.</p>`;
 }
 function pantallaOraculo() {
   const r = activeRest(),

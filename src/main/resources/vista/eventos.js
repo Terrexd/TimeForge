@@ -184,7 +184,11 @@ document.addEventListener("click", async (event) => {
           source: b.dataset.source,
           externalId: Number(id),
         });
-        toast("Obra importada y guardada.");
+        b.textContent = "Añadida";
+        b.dataset.guardada = "1";
+        close = false;
+        await refresh();
+        toast("Obra añadida a tu biblioteca.");
         break;
       case "add-friend":
         await api("/friends", "POST", { username: b.dataset.username });
@@ -240,13 +244,14 @@ document.addEventListener("click", async (event) => {
     else toast(e.message, true);
   } finally {
     busy = false;
-    b.disabled = false;
+    b.disabled = b.dataset.guardada === "1";
   }
 });
 document.addEventListener("submit", async (event) => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement)) return;
   event.preventDefault();
+  if (form.id === "external-search") return cargarCatalogoExterno();
   if (busy) return;
   busy = true;
   const button = form.querySelector('button[type="submit"],button:not([type])');
@@ -306,26 +311,6 @@ document.addEventListener("submit", async (event) => {
         await api("/rests", "POST", { minutes: Number(data.minutes) });
         toast("¡Tu descanso ya está en marcha!");
         break;
-      case "external-search": {
-        $("#modal-error").textContent = "";
-        $("#external-results").replaceChildren();
-        const list = await api(
-          "/catalog/search?source=" +
-            encodeURIComponent(data.source) +
-            "&q=" +
-            encodeURIComponent(data.q.trim()),
-        );
-        $("#external-results").innerHTML =
-          list
-            .map(
-              (w) =>
-                `<div class="search-result">${w.imagen ? `<img src="${esc(w.imagen)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}<span>${esc(w.title)}${w.anio ? ` (${esc(w.anio)})` : ""}${["STEAM", "IGDB"].includes(w.source) ? `<small>Historia principal · ${w.horasHistoriaPrincipal ? `≈ ${w.horasHistoriaPrincipal.toLocaleString("es-ES")} h` : "Sin estimación"}</small>` : ""}</span><button type="button" class="small lime" data-action="import-work" data-id="${w.id}" data-source="${w.source}">Añadir</button></div>`,
-            )
-            .join("") ||
-          "<p>No se encontraron obras. Prueba con otro título.</p>";
-        keep = true;
-        break;
-      }
       case "friend-search": {
         const list = await api("/users?q=" + encodeURIComponent(data.q));
         $("#friend-results").innerHTML =
@@ -365,6 +350,10 @@ document.addEventListener("submit", async (event) => {
   }
 });
 document.addEventListener("change", (e) => {
+  if (e.target.matches("#external-search select")) {
+    e.target.form.elements.q.value = "";
+    cargarCatalogoExterno();
+  }
   if (e.target.matches("#work-form select[name=type]")) mostrarUnidadesObra();
   if (e.target.name === "minutes") updateSpin();
   if (e.target.id === "catalog-type") {

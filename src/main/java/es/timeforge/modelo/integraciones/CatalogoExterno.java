@@ -19,12 +19,14 @@ public class CatalogoExterno {
     private final ClienteJson remote;
     private final ServicioCatalogo catalog;
     private final CatalogoIgdb igdb;
+    private final CatalogoCine cine;
 
     public CatalogoExterno(ClienteJson remote, ServicioCatalogo catalog,
-            CatalogoIgdb igdb) {
+            CatalogoIgdb igdb, CatalogoCine cine) {
         this.remote = remote;
         this.catalog = catalog;
         this.igdb = igdb;
+        this.cine = cine;
     }
 
     private String endpoint(String source) {
@@ -51,14 +53,20 @@ public class CatalogoExterno {
             }
         }
         List<Map<String, Object>> resultados = new ArrayList<>();
-        for (var item : resultadosSteam(titulo)) {
+        var juegos = titulo.isBlank() ? remote.get("https://store.steampowered.com/api/featuredcategories?l=english&cc=US")
+                .path("specials").path("items") : resultadosSteam(titulo);
+        Set<Long> vistos = new HashSet<>();
+        for (var item : juegos) {
             String nombre = item.path("name").asText();
             long id = item.path("id").asLong();
-            if (nombre.isBlank() || id <= 0) continue;
-            Map<String, Object> ficha = new HashMap<>(Map.of("id", id, "title", nombre, "source", "STEAM", "imagen", imagenSteam(id)));
+            if (nombre.isBlank() || id <= 0 || !vistos.add(id)) continue;
+            String imagen = item.path("header_image").asText(item.path("tiny_image").asText(""));
+            if (imagen.isBlank()) imagen = imagenSteam(id);
+            Map<String, Object> ficha = new HashMap<>(Map.of("id", id, "title", nombre, "source", "STEAM", "imagen", imagen));
             ficha.put("horasHistoriaPrincipal", HistoriasPrincipales.horas(nombre));
             resultados.add(ficha);
         }
+        if (titulo.isBlank()) resultados.sort(Comparator.comparing(f -> f.get("horasHistoriaPrincipal") == null));
         return resultados;
     }
 
@@ -67,25 +75,32 @@ public class CatalogoExterno {
     }
 
     public List<Map<String, Object>> search(String source, String query) {
-        ErrorNegocio.require(query.length() >= 2 && query.length() <= 100,
+        ErrorNegocio.require(query.isEmpty() || query.length() >= 2 && query.length() <= 100,
                 "La búsqueda debe contener entre 2 y 100 caracteres");
         try {
             if ("VIDEOJUEGOS".equals(source)) return buscarVideojuegos(query);
-            String url = endpoint(source) + "?limit=12&q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+            if ("CINE_SERIES".equals(source) || "CINE_PELICULAS".equals(source)) return cine.buscar(source, query);
+            String base = endpoint(source);
+            try {
+                return searchAniList(source, query);
+            } catch (InterruptedException error) {
+                throw error;
+            } catch (Exception error) {
+                // Los resultados de respaldo llevan el identificador de MyAnimeList.
+            }
+            String url = query.isEmpty() ? base.replace("/v4/", "/v4/top/") + "?limit=20&sfw=true"
+                    : base + "?limit=20&sfw=true&q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
             List<Map<String, Object>> out = new ArrayList<>();
             for (var item : remote.get(url).path("data")) {
-                out.add(Map.of("id", item.path("mal_id").asLong(), "title", item.path("title").asText(), "source", source));
+                out.add(Map.of("id", item.path("mal_id").asLong(), "title", item.path("title").asText(), "source", source,
+                        "imagen", item.path("images").path("jpg").path("image_url").asText(""),
+                        "minutos", ConversorCatalogo.minutos(item.path("duration").asText("")),
+                        "unidades", item.path(source.endsWith("_MANGA") ? "chapters" : "episodes").asInt()));
             }
             return out;
         } catch (ErrorNegocio e) {
             throw e;
         } catch (Exception e) {
-            if (source.startsWith("JIKAN_")) {
-                try {
-                    return searchAniList(source, query);
-                } catch (Exception ignored) {
-                }
-            }
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
@@ -96,6 +111,13 @@ public class CatalogoExterno {
 
     public Progreso importWork(long user, String source, long id) {
         try {
+            if (source.startsWith("ANILIST_")) return importAniList(user, source, id);
+            if (source.startsWith("CINE_")) {
+                var ficha = cine.ficha(source, id);
+                byte[] portada = optionalCover(ficha.coverUrl());
+                return catalog.addImported(user, ficha.input(), source, Long.toString(id), portada,
+                        portada == null ? null : ClienteJson.tipoImagen(portada));
+            }
             boolean usarIgdb = "IGDB".equals(source);
             JsonNode datos;
             if ("STEAM".equals(source)) {
@@ -113,12 +135,6 @@ public class CatalogoExterno {
         } catch (ErrorNegocio e) {
             throw e;
         } catch (Exception e) {
-            if (source.startsWith("JIKAN_")) {
-                try {
-                    return importAniList(user, source, id);
-                } catch (Exception ignored) {
-                }
-            }
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
@@ -128,10 +144,15 @@ public class CatalogoExterno {
 
     private List<Map<String, Object>> searchAniList(String source, String query) throws Exception {
         String type = source.equals("JIKAN_MANGA") ? "MANGA" : "ANIME";
+        Map<String, String> variables = new HashMap<>(Map.of("type", type));
+        if (!query.isEmpty()) variables.put("q", query);
+        String orden = query.isEmpty() ? "POPULARITY_DESC" : "SEARCH_MATCH";
         var payload = Map.of("query",
-                "query ($q: String, $type: MediaType) { Page(page: 1, perPage: 12) { media(search: $q, type: $type) { id title { romaji english } } } }",
-                "variables", Map.of("q", query, "type", type));
+                "query ($q: String, $type: MediaType) { Page(page: 1, perPage: 20) { media(search: $q, type: $type, isAdult: false, sort: "
+                        + orden + ") { id title { romaji english } coverImage { large } duration chapters episodes } } }",
+                "variables", variables);
         var json = remote.post("https://graphql.anilist.co", payload);
+        if (json.has("errors")) throw new IllegalStateException("AniList no pudo completar la consulta");
         List<Map<String, Object>> out = new ArrayList<>();
         for (var item : json.path("data").path("Page").path("media")) {
             long id = item.path("id").asLong();
@@ -139,20 +160,24 @@ public class CatalogoExterno {
             if (title.isBlank()) {
                 title = item.path("title").path("romaji").asText();
             }
-            out.add(Map.of("id", id, "title", title, "source", source));
+            out.add(Map.of("id", id, "title", title, "source", "ANILIST_" + type,
+                    "imagen", item.path("coverImage").path("large").asText(""), "minutos", item.path("duration").asInt(),
+                    "unidades", item.path(type.equals("MANGA") ? "chapters" : "episodes").asInt()));
         }
         return out;
     }
 
     private Progreso importAniList(long user, String source, long id) throws Exception {
+        String tipo = source.endsWith("_MANGA") ? "MANGA" : "ANIME";
         var payload = Map.of("query",
-                "query ($id: Int) { Media(id: $id) { id title { romaji english native } description(asHtml: false) genres chapters episodes coverImage { large } type } }",
-                "variables", Map.of("id", id));
+                "query ($id: Int, $type: MediaType) { Media(id: $id, type: $type) { id title { romaji english native } description(asHtml: false) genres duration chapters episodes coverImage { large } } }",
+                "variables", Map.of("id", id, "type", tipo));
         var json = remote.post("https://graphql.anilist.co", payload);
         var media = json.path("data").path("Media");
         var imported = ConversorCatalogo.mapAniList(source, media);
         byte[] cover = optionalCover(imported.coverUrl());
-        return catalog.addImported(user, imported.input(), source, Long.toString(id), cover, "image/jpeg");
+        return catalog.addImported(user, imported.input(), source, Long.toString(id), cover,
+                cover == null ? null : ClienteJson.tipoImagen(cover));
     }
 
     /** Recupera también las portadas de juegos añadidos a mano o importados sin imagen. */

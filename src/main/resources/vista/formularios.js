@@ -50,14 +50,49 @@ function formularioProgreso(id) {
 function buscarObrasExternas() {
   modal(
     "Descubre tu próxima historia",
-    `<form id="external-search"><div class="form-grid"><label class="field">Catálogo<select name="source"><option value="VIDEOJUEGOS">Videojuegos</option><option value="JIKAN_ANIME">Anime</option><option value="JIKAN_MANGA">Manga</option></select></label>${field("Título", "q", "", 'required minlength="2" maxlength="100"')}</div>${actions("Buscar")}</form><div class="search-results" id="external-results"></div>`,
+    `<form id="external-search"><div class="form-grid"><label class="field">Catálogo<select name="source"><option value="VIDEOJUEGOS">Videojuegos</option><option value="JIKAN_ANIME">Anime</option><option value="JIKAN_MANGA">Manga</option><option value="CINE_SERIES">Series</option><option value="CINE_PELICULAS">Películas</option></select></label>${field("Título", "q", "", 'minlength="2" maxlength="100" placeholder="Buscar por título"')}</div><div class="form-actions"><button type="button" data-action="close-modal">Cerrar</button><button class="primary" type="submit">Buscar</button></div></form><div class="search-results" id="external-results" aria-label="Resultados del catálogo" tabindex="0"></div>`,
   );
+  cargarCatalogoExterno();
 }
 function buscarAmigo() {
   modal(
     "Encuentra a tus compañeros",
     `<form id="friend-search">${field("Nombre de usuario", "q", "", 'required minlength="2" maxlength="40"')}${actions("Buscar")}</form><div id="friend-results"></div>`,
   );
+}
+
+let consultaCatalogo = 0;
+async function cargarCatalogoExterno() {
+  const turno = ++consultaCatalogo;
+  const form = $("#external-search");
+  const panel = $("#external-results");
+  const parametros = new URLSearchParams({ source: form.elements.source.value, q: form.elements.q.value.trim() });
+  $("#modal-error").textContent = "";
+  panel.textContent = "Cargando títulos…";
+  panel.scrollTop = 0;
+  try {
+    const lista = await api("/catalog/search?" + parametros);
+    if (turno !== consultaCatalogo || !panel.isConnected) return;
+    panel.innerHTML = lista.map(fichaExterna).join("") || "<p>No se encontraron títulos.</p>";
+  } catch (error) {
+    if (turno === consultaCatalogo && panel.isConnected) panel.textContent = error.message;
+  }
+}
+
+function fichaExterna(obra) {
+  const guardada = S.catalog.some(({work}) => work.source === obra.source && String(work.externalId) === String(obra.id));
+  let duracion = "Duración sin estimación";
+  if (["STEAM", "IGDB"].includes(obra.source)) {
+    if (obra.horasHistoriaPrincipal) duracion = `Historia principal · ≈ ${obra.horasHistoriaPrincipal.toLocaleString("es-ES")} h`;
+  } else if (obra.source.endsWith("_MANGA")) {
+    duracion = obra.unidades ? `${obra.unidades} capítulos · ≈ ${(obra.unidades / 6).toLocaleString("es-ES", {maximumFractionDigits: 1})} h de lectura` : "≈ 10 min de lectura por capítulo";
+  } else if (obra.minutos) {
+    duracion = obra.source === "CINE_PELICULAS" ? `${obra.minutos} min`
+      : `${obra.unidades ? obra.unidades + " episodios · " : ""}${obra.minutos} min por episodio`;
+  } else if (obra.unidades) {
+    duracion = `${obra.unidades} episodios · Duración sin estimación`;
+  }
+  return `<div class="search-result">${obra.imagen ? `<img src="${esc(obra.imagen)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}<span>${esc(obra.title)}${obra.anio ? ` (${esc(obra.anio)})` : ""}<small>${esc(duracion)}</small></span><button type="button" class="small lime" data-action="import-work" data-id="${esc(obra.id)}" data-source="${esc(obra.source)}" ${guardada ? "disabled" : ""}>${guardada ? "Añadida" : "Añadir"}</button></div>`;
 }
 function confirmarAccion(title, text, action, id, extra = "") {
   modal(

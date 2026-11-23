@@ -1252,6 +1252,25 @@ dialog h2 {
 }
 #external-results .search-result span {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#external-results {
+  height: min(45vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-top: 1px solid var(--line);
+  padding: 6px 8px 0 0;
+}
+#external-results .search-result img {
+  width: 70px;
+  height: 68px;
+  object-fit: contain;
+  background: #100d20;
+}
+#external-results .search-result small {
+  color: var(--muted);
 }
 .footer-note {
   font-size: 10px;

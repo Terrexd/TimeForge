@@ -84,6 +84,15 @@ class AplicacionIntegracionTest {
                 @Override
                 public JsonNode get(String url) throws Exception {
                     return switch (url) {
+                    case "https://cinemeta-catalogs.strem.io/top/catalog/series/top.json" ->
+                        json.readTree("""
+                            {"metas":[{"id":"tt0012345","name":"Serie de ejemplo","year":"2024","runtime":"42 min"}]}
+                            """);
+                    case "https://v3-cinemeta.strem.io/meta/series/tt0012345.json" ->
+                        json.readTree("""
+                            {"meta":{"id":"tt0012345","name":"Serie de ejemplo","runtime":"42 min",
+                                     "videos":[{"season":0,"episode":1},{"season":1,"episode":1},{"season":1,"episode":2}]}}
+                            """);
                     case "https://store.steampowered.com/api/storesearch/?term=Cyberpunk+2077&l=english&cc=US" ->
                         json.readTree("""
                             {"items":[{"id":1091500,"name":"Cyberpunk 2077"}]}
@@ -183,6 +192,18 @@ class AplicacionIntegracionTest {
 
     private JsonNode body(MvcResult result) throws Exception {
         return json.readTree(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    void explorarSeriesSinTituloYAnadirConDuracionYEpisodios() throws Exception {
+        var sesion = login(account());
+        mvc.perform(get("/api/catalog/search").session(sesion).param("source", "CINE_SERIES"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(12345))
+                .andExpect(jsonPath("$[0].minutos").value(42));
+        mvc.perform(post("/api/catalog/import").session(sesion).with(csrf()).contentType("application/json")
+                .content("{\"source\":\"CINE_SERIES\",\"externalId\":12345}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.work.type").value("SERIES"))
+                .andExpect(jsonPath("$.work.minutesPerUnit").value(42)).andExpect(jsonPath("$.work.totalUnits").value(2));
     }
 
     @Test

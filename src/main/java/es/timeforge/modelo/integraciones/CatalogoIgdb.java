@@ -73,7 +73,7 @@ public class CatalogoIgdb {
 
     public List<Map<String, Object>> buscar(String texto) throws Exception {
         String literal = texto.replace("\\", "\\\\").replace("\"", "\\\"");
-        var juegos = juegos("search \"" + literal + "\"; limit 12;");
+        var juegos = juegos(texto.isBlank() ? "where cover != null; sort total_rating_count desc; limit 20;" : "search \"" + literal + "\"; limit 12;");
         List<Long> ids = new ArrayList<>();
         juegos.forEach(j -> ids.add(j.path("id").asLong()));
         var horas = duraciones(ids);

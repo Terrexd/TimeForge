@@ -20,7 +20,7 @@ public final class ReglasRuleta {
 
     public static boolean eligible(Progreso p, int minutes) {
         return (p.state == EstadoProgreso.PENDING || p.state == EstadoProgreso.IN_PROGRESS)
-                && p.work.minutesPerUnit <= minutes
+                && p.work.minutesPerUnit > 0 && p.work.minutesPerUnit <= minutes
                 && (p.work.type != TipoMedio.GAME || minutes == 60 || p.work.quickSession);
     }
 
