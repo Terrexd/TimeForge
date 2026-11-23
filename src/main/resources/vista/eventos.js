@@ -123,13 +123,14 @@ document.addEventListener("click", async (event) => {
       "confirm-delete-task",
       id,
     );
-  if (action === "delete-work")
-    return confirmarAccion(
-      "Retirar obra",
-      "Se eliminará de tu biblioteca. El historial de descansos y misiones se conserva.",
-      "confirm-delete-work",
-      id,
+  if (action === "delete-work") {
+    const obra = S.catalog.find(p => p.id === Number(id)).work;
+    return modal(
+      "¿Eliminar de tu biblioteca?",
+      `<p class="aviso-eliminar">Se eliminará <strong>«${esc(obra.title)}»</strong> de tu biblioteca y perderás el progreso registrado para esta obra.</p>
+      <div class="form-actions"><button type="button" data-action="close-modal" autofocus>Cancelar</button><button type="button" class="danger" data-action="confirm-delete-work" data-id="${id}">Eliminar</button></div>`,
     );
+  }
   if (action === "cancel-rest")
     return confirmarAccion(
       "Terminar descanso",
@@ -170,6 +171,7 @@ document.addEventListener("click", async (event) => {
       }
       case "confirm-delete-work":
         await api("/catalog/" + id, "DELETE");
+        toast("Obra eliminada de tu biblioteca.");
         break;
       case "confirm-cancel-rest":
         await api("/rests/" + id + "/cancel", "POST");

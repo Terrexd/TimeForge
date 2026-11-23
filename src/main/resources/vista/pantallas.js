@@ -141,7 +141,7 @@ function tarjetaObra(p) {
       .map((s) => s[0])
       .slice(0, 3)
       .join(""),
-  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><h3>${esc(w.title)}</h3><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="progress-label"><span>${etiqueta}</span>${objetivo ? `<strong>${porcentaje}%</strong>` : ""}</div>${barra}<p>${duracion}${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
+  )}</strong><small>BIBLIOTECA TIMEFORGE</small></div><div class="work-body"><small>${esc(w.genres || types[w.type])}</small><div class="titulo-tarjeta"><h3>${esc(w.title)}</h3><button type="button" class="papelera-obra" data-action="delete-work" data-id="${p.id}" aria-label="Eliminar ${esc(w.title)} de tu biblioteca" title="Eliminar de la biblioteca">${icon("trash")}</button></div><span class="tag ${p.state === "IN_PROGRESS" ? "cyan" : ""}">${states[p.state]}</span><div class="progress-label"><span>${etiqueta}</span>${objetivo ? `<strong>${porcentaje}%</strong>` : ""}</div>${barra}<p>${duracion}${w.quickSession ? " · Partida rápida" : ""}</p><button data-action="edit-progress" data-id="${p.id}">Actualizar progreso →</button></div></article>`;
 }
 function pantallaCatalogo() {
   let list = S.catalog.filter(

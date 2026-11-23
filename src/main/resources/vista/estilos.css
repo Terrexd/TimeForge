@@ -810,13 +810,44 @@ progress::-webkit-progress-value {
 .work-body {
   padding: 16px;
 }
-.work-body h3 {
-  margin: 7px 0 13px;
+.titulo-tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+.titulo-tarjeta h3 {
+  overflow-wrap: anywhere;
+}
+.papelera-obra {
+  flex: 0 0 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #cec3dc;
+}
+.papelera-obra:hover:not(:disabled), .papelera-obra:focus-visible {
+  color: var(--red);
+  border-color: var(--red);
+}
+#modal:has(.aviso-eliminar) {
+  max-width: 420px;
+}
+.aviso-eliminar {
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+#modal [data-action="confirm-delete-work"] {
+  background: #69263c;
+  color: #fff;
+  border-color: #a94763;
 }
 .work-body p {
   font-size: 11px;
 }
-.work-body button {
+.work-body > button {
   width: 100%;
   margin-top: 14px;
 }

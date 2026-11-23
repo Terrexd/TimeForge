@@ -30,8 +30,14 @@ El explorador carga sugerencias al abrirse y al cambiar entre videojuegos, anime
 
 Pasaron 38 pruebas. En Chrome con el JAR actualizado y una base temporal se añadieron cinco obras, una por categoría, sin cerrar el explorador. Se comprobaron la carga de imágenes, la duración, el desplazamiento en una pantalla de 390 píxeles y la búsqueda de películas por título. Las fichas sin información suficiente indican que falta la estimación.
 
-## Última tarea
+## Editor de progreso
 
 Se rediseñó el editor de progreso de la biblioteca. La cabecera muestra el formato, el título y la portada disponible. Se puede cambiar de estado, sumar o restar una unidad y escribir el progreso exacto. La barra y el porcentaje responden a los cambios antes de guardar. Las series y el anime muestran temporada, y el manga y los cómics muestran tomo. Los detalles secundarios y la sinopsis se despliegan bajo demanda.
 
 Pasaron 38 pruebas y se actualizó el JAR de iniciar.bat. En Chrome se verificaron el avance de una serie de siete episodios, completar y cancelar cambios, guardar la temporada y la plataforma, el tomo de un manga y el botón de película vista. Un videojuego conservó 35,5 horas al marcarlo completado. Se comprobó el diseño en escritorio y a 390 píxeles de ancho.
+
+## Última tarea
+
+Cada tarjeta de la biblioteca tiene una papelera junto al título. Se retiró el botón de eliminación del editor de progreso. La confirmación compacta indica el título seleccionado y la pérdida del progreso de esa obra. Cancelar recibe el foco inicial y Escape cierra la ventana.
+
+Pasaron 38 pruebas y se actualizó el JAR. En Chrome, con dos obras de prueba, se verificó que cancelar o pulsar Escape conserva ambas y que confirmar en móvil envía una sola petición y elimina únicamente la seleccionada.

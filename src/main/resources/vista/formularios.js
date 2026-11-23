@@ -68,7 +68,7 @@ function formularioProgreso(id) {
     ${actions("Guardar progreso")}</form>
     <details class="obra-detalles obra-opciones"><summary>Más sobre esta obra</summary>
       ${w.synopsis ? `<p class="obra-sinopsis">${esc(w.synopsis)}</p>` : ""}
-      <div class="form-actions"><button data-action="classify" data-id="${p.id}">✧ Sugerir etiquetas con IA</button><button class="danger" data-action="delete-work" data-id="${p.id}">Retirar de biblioteca</button></div>
+      <div class="form-actions"><button data-action="classify" data-id="${p.id}">✧ Sugerir etiquetas con IA</button></div>
       <p class="oracle-text" id="classification" hidden></p></details>`, cabecera);
   actualizarEditorProgreso($("#progress-form"));
 }

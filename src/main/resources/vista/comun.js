@@ -9,6 +9,7 @@ const esc = (v) =>
       ],
   );
 const paths = {
+  trash: "M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7",
   home: "M3 11 12 3l9 8M5 10v11h5v-7h4v7h5V10",
   tasks: "M9 4h11v17H4V4h2M8 2h8v4H8zM7 11l2 2 3-4M14 11h3M7 17h10",
   timer: "M9 2h6M12 8v5l3 2M17 5l2-2M21 13a9 9 0 1 1-18 0 9 9 0 0 1 18 0",
