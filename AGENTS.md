@@ -32,4 +32,4 @@ Se actualizaron las tarjetas y el formulario de progreso para mostrar la portada
 
 ## Última tarea
 
-Se revisó por qué aparecen varias carpetas en `.tools`. Las tres de nombre aleatorio contienen copias del proyecto y resultados de compilación. `commit-mvc-I2ZRK2` contiene `src` y `README.md`, y `m2` almacena dependencias de Maven. Git ignora `.tools/`. La consulta se resolvió inspeccionando los directorios y `.gitignore`.
+Se limpió la carpeta local `.tools`. Se eliminaron tres copias temporales del proyecto, la copia de preparación del commit MVC, la caché local `m2` y las dependencias auxiliares `node_modules`. Las capturas, referencias, registros y resultados existentes quedaron agrupados por uso. Los scripts de navegador conservan sus manifiestos de npm, por lo que se pueden recuperar sus dependencias con `npm ci` desde `.tools`. Se verificó que el JAR que utiliza `iniciar.bat` contiene la clase principal y la página de inicio. Git ignora `.tools/`, por lo que el commit solo registra la limpieza en esta memoria.
