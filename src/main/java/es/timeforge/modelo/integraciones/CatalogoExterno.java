@@ -20,12 +20,14 @@ public class CatalogoExterno {
     private final ClienteJson remote;
     private final ServicioCatalogo catalog;
     private final String rawgKey;
+    private final CatalogoIgdb igdb;
 
     public CatalogoExterno(ClienteJson remote, ServicioCatalogo catalog,
-            @Value("${timeforge.rawg-key}") String rawgKey) {
+            @Value("${timeforge.rawg-key}") String rawgKey, CatalogoIgdb igdb) {
         this.remote = remote;
         this.catalog = catalog;
         this.rawgKey = rawgKey.strip();
+        this.igdb = igdb;
     }
 
     private String endpoint(String source) {
@@ -51,9 +53,10 @@ public class CatalogoExterno {
     public List<Map<String, Object>> search(String source, String query) {
         ErrorNegocio.require(query.length() >= 2 && query.length() <= 100,
                 "La búsqueda debe contener entre 2 y 100 caracteres");
-        String url = endpoint(source) + "?" + (source.equals("RAWG") ? "page_size=12&search=" : "limit=12&q=")
-                + URLEncoder.encode(query, StandardCharsets.UTF_8);
         try {
+            if ("IGDB".equals(source)) return igdb.buscar(query);
+            String url = endpoint(source) + "?" + (source.equals("RAWG") ? "page_size=12&search=" : "limit=12&q=")
+                    + URLEncoder.encode(query, StandardCharsets.UTF_8);
             var json = remote.get(conClaveRawg(url, source));
             List<Map<String, Object>> out = new ArrayList<>();
             for (var item : json.path(source.equals("RAWG") ? "results" : "data")) {
@@ -78,6 +81,8 @@ public class CatalogoExterno {
                 out.add(ficha);
             }
             return out;
+        } catch (ErrorNegocio e) {
+            throw e;
         } catch (Exception e) {
             if (source.startsWith("JIKAN_")) {
                 try {
@@ -94,12 +99,13 @@ public class CatalogoExterno {
     }
 
     public Progreso importWork(long user, String source, long id) {
-        String url = conClaveRawg(endpoint(source) + "/" + id, source);
         try {
-            var imported = ConversorCatalogo.map(source, remote.get(url));
+            boolean usarIgdb = "IGDB".equals(source);
+            var datos = usarIgdb ? igdb.juego(id) : remote.get(conClaveRawg(endpoint(source) + "/" + id, source));
+            var imported = ConversorCatalogo.map(source, datos);
             byte[] cover = optionalCover(imported.coverUrl());
             return catalog.addImported(user, imported.input(), source, Long.toString(id), cover,
-                    cover == null ? null : ClienteJson.tipoImagen(cover));
+                    cover == null ? null : ClienteJson.tipoImagen(cover), usarIgdb ? igdb.duraciones(List.of(id)).get(id) : null);
         } catch (ErrorNegocio e) {
             throw e;
         } catch (Exception e) {
@@ -147,6 +153,17 @@ public class CatalogoExterno {
 
     /** Recupera también las portadas de juegos añadidos a mano o importados sin imagen. */
     public byte[] portadaJuego(Obra obra) {
+        if ("IGDB".equals(obra.source)) {
+            try {
+                byte[] portada = optionalCover(CatalogoIgdb.imagen(igdb.juego(Long.parseLong(obra.externalId))));
+                if (portada != null) return portada;
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (Exception ignored) {
+                // Si IGDB no está disponible, se consulta Steam.
+            }
+        }
         if ("RAWG".equals(obra.source) && !rawgKey.isBlank() && obra.externalId != null && obra.externalId.matches("[0-9]+")) {
             try {
                 var ficha = remote.get(conClaveRawg(endpoint("RAWG") + "/" + obra.externalId, "RAWG"));

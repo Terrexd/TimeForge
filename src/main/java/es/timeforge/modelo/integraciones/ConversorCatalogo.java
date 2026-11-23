@@ -19,19 +19,20 @@ public final class ConversorCatalogo {
     }
 
     public static ImportedWork map(String source, JsonNode response) {
-        boolean game = source.equals("RAWG");
+        boolean igdb = source.equals("IGDB");
+        boolean game = igdb || source.equals("RAWG");
         boolean manga = source.equals("JIKAN_MANGA");
         JsonNode data = game ? response : response.path("data");
         String title = data.path(game ? "name" : "title").asText();
         ErrorNegocio.require(!title.isBlank(), "La ficha externa no contiene un título válido");
-        String synopsis = data.path(game ? "description_raw" : "synopsis").asText("");
+        String synopsis = data.path(igdb ? "summary" : game ? "description_raw" : "synopsis").asText("");
         StringJoiner genres = new StringJoiner(", ");
         for (var genre : data.path("genres"))
             genres.add(genre.path("name").asText());
         int total = game ? 0
                 : data.path(manga ? "chapters" : "episodes").asInt(1);
         int duration = game ? 60 : manga ? 10 : episodeMinutes(data.path("duration").asText());
-        String cover = game ? data.path("background_image").asText("")
+        String cover = igdb ? CatalogoIgdb.imagen(data) : game ? data.path("background_image").asText("")
                 : data.path("images").path("jpg").path("image_url").asText();
         var input = new DatosObra(limit(title, 150),
                 game ? TipoMedio.GAME : manga ? TipoMedio.MANGA : TipoMedio.ANIME, limit(synopsis, 8000),

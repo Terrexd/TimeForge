@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.*;
 import java.net.*;
 import java.net.http.*;
 import java.time.Duration;
+import java.nio.charset.StandardCharsets;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,6 +33,20 @@ public class ClienteJson {
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body))).build());
     }
 
+    public JsonNode tokenTwitch(String id, String secreto) throws Exception {
+        String datos = "grant_type=client_credentials&client_id=" + URLEncoder.encode(id, StandardCharsets.UTF_8)
+                + "&client_secret=" + URLEncoder.encode(secreto, StandardCharsets.UTF_8);
+        return send(HttpRequest.newBuilder(URI.create("https://id.twitch.tv/oauth2/token")).timeout(Duration.ofSeconds(8))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(datos)).build());
+    }
+
+    public JsonNode consultaIgdb(String recurso, String id, String token, String consulta) throws Exception {
+        return send(HttpRequest.newBuilder(URI.create("https://api.igdb.com/v4/" + recurso)).timeout(Duration.ofSeconds(8))
+                .header("Client-ID", id).header("Authorization", "Bearer " + token)
+                .POST(HttpRequest.BodyPublishers.ofString(consulta)).build());
+    }
+
     private JsonNode send(HttpRequest request) throws Exception {
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200)
@@ -44,7 +59,7 @@ public class ClienteJson {
         String host = uri.getHost();
         if (!"https".equals(uri.getScheme()) || host == null || !(host.equals("cdn.myanimelist.net")
                 || host.equals("cdn.akamai.steamstatic.com") || host.equals("shared.akamai.steamstatic.com")
-                || host.equals("media.rawg.io") || host.endsWith("anilist.co")))
+                || host.equals("images.igdb.com") || host.equals("media.rawg.io") || host.endsWith("anilist.co")))
             return null;
         var response = client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),
                 HttpResponse.BodyHandlers.ofByteArray());

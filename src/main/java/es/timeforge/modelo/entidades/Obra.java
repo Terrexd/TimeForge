@@ -34,9 +34,12 @@ public class Obra extends EntidadBase {
     public byte[] cover;
 
     public String coverType;
+    @JsonIgnore
+    public Double horasCampanaImportadas;
 
     public Double getHorasHistoriaPrincipal() {
-        return type == TipoMedio.GAME ? es.timeforge.modelo.HistoriasPrincipales.horas(title) : null;
+        if (type != TipoMedio.GAME) return null;
+        return horasCampanaImportadas != null ? horasCampanaImportadas : es.timeforge.modelo.HistoriasPrincipales.horas(title);
     }
 
     public double objetivoProgreso() {

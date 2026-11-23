@@ -24,7 +24,7 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 **RAWG.** El recorrido acordado es **Biblioteca de ocio → Buscar online → Videojuegos · RAWG → Buscar → Añadir**. Se retiró el formulario duplicado. Spring carga `RAWG_API_KEY` desde el entorno o desde el archivo local `.env` situado junto a `iniciar.bat`. La clave pertenece al servidor y Git ignora ese archivo.
 
-**Biblioteca de videojuegos.** La duración de la campaña usa estimaciones locales de HowLongToBeat por título. Los títulos ambiguos o desconocidos muestran «Sin estimación». Las horas jugadas se registran aparte. Las portadas ausentes se recuperan al abrir la biblioteca desde RAWG o Steam y se guardan en la base de datos.
+**Biblioteca de videojuegos.** IGDB permite importar la portada y la duración hasta los créditos por identificador de juego con IGDB_CLIENT_ID e IGDB_CLIENT_SECRET en el servidor. Para RAWG, obras manuales o fichas sin tiempo en IGDB se usan estimaciones locales de HowLongToBeat por título. Los títulos ambiguos o desconocidos muestran «Sin estimación». Las horas jugadas se registran aparte. Las portadas ausentes se recuperan al abrir la biblioteca desde RAWG o Steam y se guardan en la base de datos.
 
 ## Última comprobación de la biblioteca
 
@@ -32,4 +32,4 @@ Se actualizaron las tarjetas y el formulario de progreso para mostrar la portada
 
 ## Última tarea
 
-Se corrigió la tarjeta guardada tras añadir Assassin's Creed Unity desde RAWG. El catálogo de duración usa dos puntos en el título y Steam añade el símbolo ®. La búsqueda de horas y la recuperación de portada ahora reconocen estas variantes, también para juegos ya guardados. Steam puede proporcionar su miniatura si falla la imagen principal. Pasaron 36 pruebas y se actualizó el JAR de iniciar.bat. En Chrome, con servicios reales y una base temporal, se buscó el juego, se pulsó Añadir y se verificaron las 17,2 h de campaña y una portada de 460 × 215 píxeles antes y después de recargar. RAWG respondió con un 503 en el primer intento de búsqueda y el segundo completó el recorrido.
+Se incorporó Videojuegos · IGDB al recorrido Buscar online → Añadir. Se guardan las horas y la portada de la ficha seleccionada; a falta de portada se prueba una captura. La importación permite completar una ficha previa del mismo título conservando el progreso. Se documentó la configuración en README.md. Pasaron 37 pruebas, incluida una integración con respuestas simuladas que verifica búsqueda, importación, consulta de biblioteca y portada. Se actualizó el JAR de iniciar.bat. Falta la verificación en vivo con credenciales de Twitch, ausentes en el entorno y en el archivo .env local.

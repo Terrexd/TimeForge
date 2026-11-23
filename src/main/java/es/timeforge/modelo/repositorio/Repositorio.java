@@ -104,6 +104,11 @@ public class Repositorio {
                 .stream().findFirst().orElse(null);
     }
 
+    public Obra buscarJuegoIgdb(String id) {
+        return consultar(Obra.class, "from Obra where source = 'IGDB' and externalId = ?1", id)
+                .stream().findFirst().orElse(null);
+    }
+
     public List<Descanso> descansos(long user) {
         return em.createQuery("from Descanso r join fetch r.work where r.owner.id = :u order by r.id desc",
                 Descanso.class).setParameter("u", user).setMaxResults(100).getResultList();

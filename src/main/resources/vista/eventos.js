@@ -319,7 +319,7 @@ document.addEventListener("submit", async (event) => {
           list
             .map(
               (w) =>
-                `<div class="search-result">${w.imagen ? `<img src="${esc(w.imagen)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}<span>${esc(w.title)}${w.source === "RAWG" ? `<small>Historia principal · ${w.horasHistoriaPrincipal ? `≈ ${w.horasHistoriaPrincipal.toLocaleString("es-ES")} h` : "Sin estimación"}</small>` : ""}</span><button type="button" class="small lime" data-action="import-work" data-id="${w.id}" data-source="${w.source}">Añadir</button></div>`,
+                `<div class="search-result">${w.imagen ? `<img src="${esc(w.imagen)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}<span>${esc(w.title)}${w.anio ? ` (${esc(w.anio)})` : ""}${["RAWG", "IGDB"].includes(w.source) ? `<small>Historia principal · ${w.horasHistoriaPrincipal ? `≈ ${w.horasHistoriaPrincipal.toLocaleString("es-ES")} h` : "Sin estimación"}</small>` : ""}</span><button type="button" class="small lime" data-action="import-work" data-id="${w.id}" data-source="${w.source}">Añadir</button></div>`,
             )
             .join("") ||
           "<p>No se encontraron obras. Prueba con otro título.</p>";

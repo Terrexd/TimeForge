@@ -56,7 +56,7 @@ public class ConfiguracionSeguridad {
                     res.getWriter().write(
                             "{\"message\":\"Operación no autorizada o sesión caducada. Recarga la página\"}");
                 })).headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives(
-                        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://media.rawg.io; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")));
+                        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://media.rawg.io https://images.igdb.com; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")));
         return http.build();
     }
 }

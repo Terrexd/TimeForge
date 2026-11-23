@@ -45,7 +45,7 @@ public final class DatosEntrada {
             @Pattern(regexp = "SUSPEND|REACTIVATE|DELETE") @NotNull String action) {
     }
 
-    public record DatosImportacion(@Pattern(regexp = "JIKAN_ANIME|JIKAN_MANGA|RAWG") @NotNull String source,
+    public record DatosImportacion(@Pattern(regexp = "JIKAN_ANIME|JIKAN_MANGA|RAWG|IGDB") @NotNull String source,
             @Min(1) long externalId) {
     }
 }

@@ -12,6 +12,17 @@ Con un JDK 21 o superior, abre PowerShell en la carpeta del proyecto y ejecuta:
 
 Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución descarga las dependencias de Maven. Por defecto se utiliza H2 y los datos se guardan en `.data/`. El perfil `mysql` permite usar MySQL con los ajustes de `application-mysql.properties`.
 
+## Añadir videojuegos desde IGDB
+
+IGDB relaciona cada portada y el tiempo medio hasta los créditos con el identificador del juego. Registra una aplicación en la [consola de desarrolladores de Twitch](https://dev.twitch.tv/console/apps), genera su secreto y guarda ambas credenciales en el archivo local `.env` junto a `iniciar.bat`.
+
+```properties
+IGDB_CLIENT_ID=tu_identificador
+IGDB_CLIENT_SECRET=tu_secreto
+```
+
+Reinicia TimeForge y abre **Biblioteca de ocio → Buscar online → Videojuegos · IGDB**. Busca el título y pulsa **Añadir** en la edición que juegas. La biblioteca guarda la imagen y las horas de campaña disponibles. Si ya tenías una ficha con el mismo título, al importarla desde IGDB conservas tu progreso. Si IGDB aún no tiene tiempos, se consulta el catálogo local de HowLongToBeat. Cuando ambas fuentes carecen de datos, la tarjeta muestra «Sin estimación».
+
 ## Añadir videojuegos desde RAWG
 
 Obtén tu clave en [RAWG](https://rawg.io/apidocs). En la carpeta de `iniciar.bat`, crea o abre el archivo `.env` y guarda una línea con tu clave, sin comillas. Git ignora este archivo.

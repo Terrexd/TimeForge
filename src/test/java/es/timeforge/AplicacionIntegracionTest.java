@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:timeforge_test;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.jpa.hibernate.ddl-auto=create-drop", "timeforge.gemini-key=", "timeforge.admin-user=",
-        "timeforge.admin-password=", "timeforge.rawg-key=clave-de-prueba" })
+        "timeforge.admin-password=", "timeforge.rawg-key=clave-de-prueba",
+        "IGDB_CLIENT_ID=cliente-prueba", "IGDB_CLIENT_SECRET=secreto-prueba" })
 @AutoConfigureMockMvc
 @Import(AplicacionIntegracionTest.TestTime.class)
 class AplicacionIntegracionTest {
@@ -59,6 +60,27 @@ class AplicacionIntegracionTest {
         ClienteJson catalogoSimulado(ObjectMapper json) {
             return new ClienteJson(json) {
                 @Override
+                public JsonNode tokenTwitch(String id, String secreto) throws Exception {
+                    assertEquals("cliente-prueba", id);
+                    assertEquals("secreto-prueba", secreto);
+                    return json.readTree("{\"access_token\":\"token-prueba\",\"expires_in\":3600}");
+                }
+
+                @Override
+                public JsonNode consultaIgdb(String recurso, String id, String token, String consulta) throws Exception {
+                    assertEquals("token-prueba", token);
+                    if (recurso.equals("game_time_to_beats")) {
+                        assertTrue(consulta.contains("game_id = (101"));
+                        return json.readTree("[{\"game_id\":101,\"hastily\":45000}]");
+                    }
+                    assertEquals("games", recurso);
+                    String juego = "{\"id\":101,\"name\":\"Juego sin coincidencia local\",\"cover\":{\"image_id\":\"portada101\"}}";
+                    if (consulta.contains("where id = 101;")) return json.readTree("[" + juego + "]");
+                    assertTrue(consulta.contains("search \"Juego\";"));
+                    return json.readTree("[" + juego + ",{\"id\":102,\"name\":\"Juego sin campaña\"}]");
+                }
+
+                @Override
                 public JsonNode get(String url) throws Exception {
                     return switch (url) {
                     case "https://api.rawg.io/api/games?page_size=12&search=Hollow+Knight&key=clave-de-prueba" ->
@@ -89,7 +111,8 @@ class AplicacionIntegracionTest {
                 @Override
                 public byte[] cover(String url) {
                     assertTrue(url.equals("https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg")
-                            || url.equals("https://cdn.akamai.steamstatic.com/steam/apps/289650/header.jpg"));
+                            || url.equals("https://cdn.akamai.steamstatic.com/steam/apps/289650/header.jpg")
+                            || url.equals("https://images.igdb.com/igdb/image/upload/t_cover_big/portada101.jpg"));
                     return new byte[]{(byte) 0xff, (byte) 0xd8, (byte) 0xff};
                 }
             };
@@ -188,6 +211,27 @@ class AplicacionIntegracionTest {
                 .andExpect(jsonPath("$[0].work.source").value("RAWG"))
                 .andExpect(jsonPath("$[0].work.type").value("GAME"))
                 .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(27.0));
+    }
+
+    @Test
+    void igdbAsociaHorasAlIdYEnriqueceUnaFichaGuardadaSinPerderProgreso() throws Exception {
+        var usuario = account();
+        var sesion = login(usuario);
+        var progreso = catalog.add(usuario.id, new DatosObra("Juego sin coincidencia local", TipoMedio.GAME,
+                "", "", 0, 60, false));
+        catalog.update(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 4, 0, 0, ""));
+        mvc.perform(get("/api/catalog/search").session(sesion).param("source", "IGDB").param("q", "Juego"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(12.5))
+                .andExpect(jsonPath("$[1].horasHistoriaPrincipal").doesNotExist());
+        mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
+                .contentType("application/json").content("{\"source\":\"IGDB\",\"externalId\":101}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(progreso.id));
+        mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].currentUnits").value(4))
+                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(12.5))
+                .andExpect(jsonPath("$[0].work.source").value("IGDB"));
+        mvc.perform(get("/api/covers/" + progreso.work.id).session(sesion)).andExpect(status().isOk())
+                .andExpect(content().contentType("image/jpeg"));
     }
 
     @Test

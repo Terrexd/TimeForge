@@ -35,9 +35,22 @@ public class ServicioCatalogo {
 
     public Progreso addImported(long user, DatosObra input, String source, String externalId, byte[] cover,
             String coverType) {
+        return addImported(user, input, source, externalId, cover, coverType, null);
+    }
+
+    public Progreso addImported(long user, DatosObra input, String source, String externalId, byte[] cover,
+            String coverType, Double horasCampana) {
         var a = accounts.locked(user);
         String normalized = input.title().trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
-        Obra w = repositorio.buscarObra(normalized, input.type());
+        boolean igdb = "IGDB".equals(source);
+        Obra w = igdb ? repositorio.buscarJuegoIgdb(externalId) : null;
+        if (w == null) {
+            w = repositorio.buscarObra(normalized, input.type());
+            if (igdb && w != null && "IGDB".equals(w.source) && !externalId.equals(w.externalId)) {
+                normalized += " [igdb " + externalId + "]";
+                w = null;
+            }
+        }
         if (w == null) {
             w = new Obra();
             w.title = input.title().trim();
@@ -53,7 +66,7 @@ public class ServicioCatalogo {
             w.cover = cover;
             w.coverType = coverType;
             repositorio.guardar(w);
-        } else if (!source.equals("MANUAL")) {
+        } else if (!source.equals("MANUAL") && (igdb || !"IGDB".equals(w.source))) {
             w.synopsis = input.synopsis();
             w.genres = input.genres();
             w.source = source;
@@ -64,7 +77,10 @@ public class ServicioCatalogo {
             }
         }
         long workId = w.id;
-        require(repositorio.catalogoPersonal(user).stream().noneMatch(p -> p.work.id == workId),
+        if (horasCampana != null) w.horasCampanaImportadas = horasCampana;
+        var existente = repositorio.catalogoPersonal(user).stream().filter(p -> p.work.id == workId).findFirst();
+        if ("IGDB".equals(source) && existente.isPresent()) return existente.get();
+        require(existente.isEmpty(),
                 "Esta obra ya existe en tu catálogo. Edita su estado o progreso desde tu lista");
         var p = new Progreso();
         p.owner = a;
