@@ -26,6 +26,10 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 **Biblioteca de videojuegos.** La duración de la campaña usa estimaciones locales de HowLongToBeat por título. Los títulos ambiguos o desconocidos muestran «Sin estimación». Las horas jugadas se registran aparte. Las portadas ausentes se recuperan al abrir la biblioteca desde RAWG o Steam y se guardan en la base de datos.
 
-## Última tarea
+## Última comprobación de la biblioteca
 
 Se actualizaron las tarjetas y el formulario de progreso para mostrar la portada y las horas de historia principal también en juegos ya guardados. Pasaron 35 pruebas. En Chrome, con el JAR de inicio y una base temporal, se comprobó que Cyberpunk 2077 muestra unas 26 h y una imagen real de Steam de 460 × 215 píxeles. La prueba de importación de RAWG sigue usando una respuesta simulada.
+
+## Última tarea
+
+Se revisó por qué aparecen varias carpetas en `.tools`. Las tres de nombre aleatorio contienen copias del proyecto y resultados de compilación. `commit-mvc-I2ZRK2` contiene `src` y `README.md`, y `m2` almacena dependencias de Maven. Git ignora `.tools/`. La consulta se resolvió inspeccionando los directorios y `.gitignore`.
