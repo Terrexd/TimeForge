@@ -73,13 +73,23 @@ class AplicacionIntegracionTest {
                         json.readTree("""
                             {"items":[{"id":1091500,"name":"Cyberpunk 2077"}]}
                             """);
+                    case "https://api.rawg.io/api/games/1970?key=clave-de-prueba" ->
+                        json.readTree("""
+                            {"name":"Assassin's Creed Unity","background_image":null}
+                            """);
+                    case "https://store.steampowered.com/api/storesearch/?term=Assassin%27s+Creed+Unity&l=english&cc=US" ->
+                        json.readTree("""
+                            {"items":[{"id":324331,"name":"Assassin’s Creed Unity Revolutionary Armaments Pack"},
+                                      {"id":289650,"name":"Assassin's Creed® Unity"}]}
+                            """);
                     default -> throw new AssertionError("Petición inesperada al catálogo de prueba");
                     };
                 }
 
                 @Override
                 public byte[] cover(String url) {
-                    assertEquals("https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg", url);
+                    assertTrue(url.equals("https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg")
+                            || url.equals("https://cdn.akamai.steamstatic.com/steam/apps/289650/header.jpg"));
                     return new byte[]{(byte) 0xff, (byte) 0xd8, (byte) 0xff};
                 }
             };
@@ -178,6 +188,20 @@ class AplicacionIntegracionTest {
                 .andExpect(jsonPath("$[0].work.source").value("RAWG"))
                 .andExpect(jsonPath("$[0].work.type").value("GAME"))
                 .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(27.0));
+    }
+
+    @Test
+    void unityImportadoMuestraDuracionYGuardaLaPortadaAlAbrirSuTarjeta() throws Exception {
+        var sesion = login(account());
+        var respuesta = mvc.perform(post("/api/catalog/import").session(sesion).with(csrf())
+                .contentType("application/json").content("{\"source\":\"RAWG\",\"externalId\":1970}"))
+                .andExpect(status().isOk()).andReturn();
+        long id = body(respuesta).path("work").path("id").asLong();
+        mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(17.2));
+        mvc.perform(get("/api/covers/" + id).session(sesion)).andExpect(status().isOk())
+                .andExpect(content().contentType("image/jpeg"));
+        assertNotNull(tx.execute(s -> repositorio.buscarPorId(Obra.class, id).cover));
     }
 
     @Test

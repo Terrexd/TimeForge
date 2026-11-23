@@ -43,7 +43,7 @@ public class ClienteJson {
         URI uri = URI.create(url);
         String host = uri.getHost();
         if (!"https".equals(uri.getScheme()) || host == null || !(host.equals("cdn.myanimelist.net")
-                || host.equals("cdn.akamai.steamstatic.com")
+                || host.equals("cdn.akamai.steamstatic.com") || host.equals("shared.akamai.steamstatic.com")
                 || host.equals("media.rawg.io") || host.endsWith("anilist.co")))
             return null;
         var response = client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),

@@ -31,7 +31,7 @@ public final class ConversorCatalogo {
         int total = game ? 0
                 : data.path(manga ? "chapters" : "episodes").asInt(1);
         int duration = game ? 60 : manga ? 10 : episodeMinutes(data.path("duration").asText());
-        String cover = game ? data.path("background_image").asText()
+        String cover = game ? data.path("background_image").asText("")
                 : data.path("images").path("jpg").path("image_url").asText();
         var input = new DatosObra(limit(title, 150),
                 game ? TipoMedio.GAME : manga ? TipoMedio.MANGA : TipoMedio.ANIME, limit(synopsis, 8000),

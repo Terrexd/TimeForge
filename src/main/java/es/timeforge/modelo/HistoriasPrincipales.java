@@ -14,8 +14,9 @@ public final class HistoriasPrincipales {
         return titulo == null ? null : HORAS.get(normalizar(titulo));
     }
 
-    private static String normalizar(String titulo) {
-        return titulo.trim().toLowerCase(Locale.ROOT).replace("™", "").replace("®", "");
+    public static String normalizar(String titulo) {
+        return titulo.toLowerCase(Locale.ROOT).replace("™", "").replace("®", "")
+                .replace('’', '\'').replace(':', ' ').replaceAll("\\s+", " ").strip();
     }
 
     private static Map<String, Double> cargar() {
