@@ -170,8 +170,8 @@ document.addEventListener("click", async (event) => {
     return confirmarAccion(
       "Confirmar cambio de cuenta",
       "Acción: " +
-        b.dataset.operation +
-        ". Se aplicará a la cuenta seleccionada.",
+      b.dataset.operation +
+      ". Se aplicará a la cuenta seleccionada.",
       "confirm-admin",
       id,
       `data-operation="${b.dataset.operation}"`,
@@ -199,7 +199,7 @@ document.addEventListener("click", async (event) => {
           if (document.activeElement === document.body && !$("#modal").open) {
             const botones = `[data-action="paso-obra"][data-id="${id}"]`;
             const siguiente = $(botones + `[data-incremento="${paso}"]:enabled`) || $(botones + ":enabled");
-            siguiente?.focus({preventScroll: true});
+            siguiente?.focus({ preventScroll: true });
           }
         }
         close = false;
