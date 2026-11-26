@@ -1077,6 +1077,14 @@ progress::-webkit-progress-value {
 .table-wrap {
   overflow: auto;
 }
+.visor-bbdd {
+  max-width: 1600px;
+  margin: auto;
+  padding: clamp(16px, 4vw, 48px);
+}
+.visor-bbdd > * + * {
+  margin-top: 16px;
+}
 table {
   width: 100%;
   border-collapse: collapse;

@@ -30,7 +30,7 @@ public class ConfiguracionSeguridad {
     @Bean
     SecurityFilterChain security(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/estilos.css", "/comun.js", "/pantallas.js",
+                .requestMatchers("/", "/index.html", "/bbdd", "/bbdd.html", "/bbdd.js", "/estilos.css", "/comun.js", "/pantallas.js",
                         "/formularios.js", "/eventos.js", "/favicon.svg", "/api/auth/csrf",
                         "/api/auth/register", "/api/auth/login", "/error")
                 .permitAll().requestMatchers("/api/admin/**").hasRole("ADMIN").anyRequest().authenticated())

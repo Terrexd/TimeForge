@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Base de datos · TimeForge</title>
+  <link rel="stylesheet" href="/estilos.css">
+  <script defer src="/bbdd.js"></script>
+</head>
+<body>
+  <main class="visor-bbdd">
+    <a href="/">Volver a TimeForge</a>
+    <h1>Base de datos</h1>
+    <label hidden id="selector">Tabla <select id="vista"></select></label>
+    <p id="estado" role="status">Cargando…</p>
+    <a hidden id="acceso" href="/?volver=bbdd">Iniciar sesión en TimeForge</a>
+    <div class="table-wrap"><table id="datos"></table></div>
+    <nav hidden id="paginas" aria-label="Paginación">
+      <button id="anterior">Anterior</button>
+      <button id="siguiente">Siguiente</button>
+    </nav>
+  </main>
+</body>
+</html>

@@ -12,6 +12,12 @@ Con un JDK 21 o superior, abre PowerShell en la carpeta del proyecto y ejecuta:
 
 Abre [TimeForge en tu navegador](http://localhost:8080). La primera ejecución descarga las dependencias de Maven. Por defecto se utiliza H2 y los datos se guardan en `.data/`. El perfil `mysql` permite usar MySQL con los ajustes de `application-mysql.properties`.
 
+## Consultar la base de datos
+
+Con TimeForge en marcha, inicia sesión con una cuenta de administración y abre **Administración → Consultar la base de datos**. También puedes abrir el [visor de la base de datos](http://localhost:8080/bbdd) directamente. Elige una tabla para ver sus filas en páginas de 50 registros.
+
+El visor lee vistas SQL con nombres y columnas en español. Puedes consultar esas mismas vistas desde un cliente SQL, por ejemplo con `SELECT * FROM misiones`. Las tablas de origen conservan sus nombres para que las instalaciones existentes puedan seguir usándolas. En MySQL, el usuario que arranca la aplicación necesita permisos para crear y reemplazar vistas.
+
 ## Explorar el catálogo de ocio
 
 En **Biblioteca de ocio → Buscar online** aparecen sugerencias al abrir el catálogo y al cambiar entre videojuegos, anime, manga, series y películas. Desplázate por la lista o busca por título. Puedes añadir varias obras seguidas. Las filas guardadas muestran **Añadida**.

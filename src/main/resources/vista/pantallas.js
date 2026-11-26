@@ -244,7 +244,7 @@ async function pantallaAdministracion() {
     api("/admin/ai"),
   ]);
   if (S.page !== "admin") return;
-  $("#page-content").innerHTML = `<div class="stats">${[
+  $("#page-content").innerHTML = `<p><a href="/bbdd">Consultar la base de datos</a></p><div class="stats">${[
     ["Peticiones IA", ai.metrics.requests],
     ["Errores", ai.metrics.errors],
     ["Latencia media", Math.round(ai.metrics.averageMs) + " ms"],

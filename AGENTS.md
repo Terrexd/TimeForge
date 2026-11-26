@@ -20,9 +20,9 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 ## Decisiones y comprobaciones vigentes
 
-**Visualización en VS Code.** Al abrir el archivo binario de H2 como texto aparecen caracteres de control. Se puede cerrar la pestaña sin guardar y consultar las tablas desde el navegador. En este equipo se comprobó que el JAR local de H2 2.3.232 incluye la consola web, que se inicia con `org.h2.tools.Server -web` y usa el puerto 8082 por defecto.
+**Consulta de la base de datos.** Con TimeForge en marcha, el administrador puede abrir **Administración → Consultar la base de datos** o visitar `/bbdd`. Las 13 vistas SQL ofrecen nombres y columnas en español sobre los registros existentes. El visor muestra 50 filas por página y omite contraseñas y portadas binarias. H2 sigue guardando los datos en `.data/timeforge.mv.db`. El archivo tiene formato binario.
 
-**Consulta de la base de datos local.** Se comprobó que existe `.data/timeforge.mv.db` y que `application.properties` configura H2 con el usuario `sa` y la contraseña vacía por defecto. Para ver las filas, se puede detener la aplicación y abrir la base desde un cliente H2 con la ruta absoluta a `.data/timeforge`. Las entidades `Tarea` y `Mision` corresponden a las tablas `task` y `mission`.
+**Comprobación del visor.** Una compilación limpia generó el ejecutable `target/timeforge.jar` y superó 43 pruebas. Se verificaron las 13 vistas en H2 y los permisos para visitantes, usuarios y administradores. Se probó el JAR por HTTP con una sesión administrativa y se consultó el rol en español en la vista de usuarios. Node comprobó el JavaScript modificado. El perfil MySQL sigue pendiente de prueba en un servidor real.
 
 **Lectura del código para la defensa.** El README sigue el alta y la edición de tareas, el borrado con confirmación y la incorporación y retirada de obras. En la vista, `guardarTarea` distingue el alta de la edición. Los controladores y servicios usan los mismos nombres para operaciones como `crearTarea`, `eliminarTarea` y `eliminarObra`. En el catálogo se distingue la ficha compartida del progreso personal que se borra. Se ejecutaron las 40 pruebas de Maven y se comprobó la sintaxis de `eventos.js` con Node.
 

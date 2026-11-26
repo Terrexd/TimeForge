@@ -18,9 +18,10 @@ start http://localhost:8080
 
 echo.
 echo Iniciando servidor en el puerto 8080...
+echo Base de datos: http://localhost:8080/bbdd
 echo (Para detener la aplicacion, simplemente cierra esta ventana o pulsa Ctrl + C)
 echo.
 
-"%JAVA_CMD%" -jar target\timeforge-1.0.0.jar
+"%JAVA_CMD%" -jar target\timeforge.jar
 
 pause

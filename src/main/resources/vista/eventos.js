@@ -336,6 +336,10 @@ document.addEventListener("submit", async (event) => {
         if (!response.ok)
           throw new Error("Credenciales incorrectas o cuenta suspendida");
         await token();
+        if (new URLSearchParams(location.search).get("volver") === "bbdd") {
+          location.assign("/bbdd");
+          return;
+        }
         S.page = pages[location.hash.slice(1)]
           ? location.hash.slice(1)
           : "home";

@@ -129,6 +129,24 @@ class AplicacionIntegracionTest {
 
     @Autowired
     MockMvc mvc;
+
+    @Test
+    void visorDeDatosRestringeElAccesoYConsultaTodasLasVistas() throws Exception {
+        var cuenta = account();
+        task(cuenta.id, 30);
+        var admin = org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user(cuenta.username).roles("ADMIN");
+        var usuario = org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("usuario");
+        mvc.perform(get("/bbdd")).andExpect(forwardedUrl("/bbdd.html"));
+        mvc.perform(get("/api/admin/bbdd/tareas")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/admin/bbdd/tareas").with(usuario)).andExpect(status().isForbidden());
+        var lista = mvc.perform(get("/api/admin/bbdd").with(admin)).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        for (var vista : new ObjectMapper().readTree(lista)) {
+            mvc.perform(get("/api/admin/bbdd/" + vista.asText()).with(admin)).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.columnas[0]").exists());
+        }
+        mvc.perform(get("/api/admin/bbdd/tf_user").with(admin)).andExpect(status().isNotFound());
+    }
     @Autowired
     ObjectMapper json;
     @Autowired
