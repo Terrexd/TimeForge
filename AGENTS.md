@@ -20,6 +20,8 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 ## Decisiones y comprobaciones vigentes
 
+**Apagado del servidor y la base de datos.** TimeForge utiliza H2 en modo archivo embebido sobre `.data/timeforge.mv.db`. La base de datos no es un servicio externo ni un demonio independiente: se inicia y se apaga automáticamente junto con la aplicación Spring Boot. Para apagarla de forma normal, basta con pulsar `Ctrl + C` o cerrar la ventana de la consola de `iniciar.bat`. A petición del usuario, se terminaron los procesos Java y la consola activa, verificando que el puerto 8080 y el archivo de base de datos quedaron completamente liberados.
+
 **Revisión de misiones de prueba.** Se consultaron las cinco misiones guardadas. La misión 1, «Una historia pendiente», pertenece a la cuenta de prueba de interfaz y coincide con el título usado en su guion. La cuenta de administración tiene las misiones 33, 65, 66 y 67. Queda pendiente confirmar los identificadores que se eliminarán. La inspección no modificó las misiones.
 
 **Arranque desde Windows.** La consola H2 externa mantenía abierto `.data/timeforge.mv.db` y Spring no podía arrancar. Tras cerrar esa conexión, se arrancó con los datos locales. `iniciar.bat` solicita abrir el navegador cuando Spring emite `ApplicationReadyEvent` e indica cómo liberar la base si el arranque falla. Pasaron 43 pruebas, se empaquetó el JAR y se comprobó HTTP 200 en la portada, `/bbdd`, el JavaScript del visor y el punto de acceso CSRF.
