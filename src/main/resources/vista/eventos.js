@@ -300,6 +300,12 @@ document.addEventListener("click", async (event) => {
     b.disabled = b.dataset.guardada === "1";
   }
 });
+function guardarTarea(idTarea, datos) {
+  datos.estimatedMinutes = Number(datos.estimatedMinutes);
+  if (idTarea) return api("/tasks/" + idTarea, "PUT", datos);
+  return api("/tasks", "POST", datos);
+}
+
 document.addEventListener("submit", async (event) => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement)) return;
@@ -337,12 +343,7 @@ document.addEventListener("submit", async (event) => {
         return;
       }
       case "task-form":
-        data.estimatedMinutes = Number(data.estimatedMinutes);
-        await api(
-          "/tasks" + (form.dataset.id ? "/" + form.dataset.id : ""),
-          form.dataset.id ? "PUT" : "POST",
-          data,
-        );
+        await guardarTarea(form.dataset.id, data);
         break;
       case "work-form":
         data.totalUnits = Number(data.totalUnits);

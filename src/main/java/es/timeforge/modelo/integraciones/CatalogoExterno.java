@@ -115,7 +115,7 @@ public class CatalogoExterno {
             if (source.startsWith("CINE_")) {
                 var ficha = cine.ficha(source, id);
                 byte[] portada = optionalCover(ficha.coverUrl());
-                return catalog.addImported(user, ficha.input(), source, Long.toString(id), portada,
+                return catalog.guardarObraEnBiblioteca(user, ficha.input(), source, Long.toString(id), portada,
                         portada == null ? null : ClienteJson.tipoImagen(portada));
             }
             boolean usarIgdb = "IGDB".equals(source);
@@ -130,7 +130,7 @@ public class CatalogoExterno {
             var imported = ConversorCatalogo.map(source, datos);
             byte[] cover = optionalCover(imported.coverUrl());
             if (cover == null && "STEAM".equals(source)) cover = optionalCover(imagenSteam(id));
-            return catalog.addImported(user, imported.input(), source, Long.toString(id), cover,
+            return catalog.guardarObraEnBiblioteca(user, imported.input(), source, Long.toString(id), cover,
                     cover == null ? null : ClienteJson.tipoImagen(cover), usarIgdb ? igdb.duraciones(List.of(id)).get(id) : null);
         } catch (ErrorNegocio e) {
             throw e;
@@ -176,7 +176,7 @@ public class CatalogoExterno {
         var media = json.path("data").path("Media");
         var imported = ConversorCatalogo.mapAniList(source, media);
         byte[] cover = optionalCover(imported.coverUrl());
-        return catalog.addImported(user, imported.input(), source, Long.toString(id), cover,
+        return catalog.guardarObraEnBiblioteca(user, imported.input(), source, Long.toString(id), cover,
                 cover == null ? null : ClienteJson.tipoImagen(cover));
     }
 

@@ -163,12 +163,12 @@ class AplicacionIntegracionTest {
     }
 
     private Tarea task(long user, int minutes) {
-        return tasks.crear(user,
+        return tasks.crearTarea(user,
                 new DatosTarea("Estudiar Java", "Servicios y persistencia", "ESTUDIO", "ALTA", minutes));
     }
 
     private Progreso work(long user, String title, int duration) {
-        return catalog.add(user, new DatosObra(title, TipoMedio.MANGA, "Una historia de aventuras",
+        return catalog.agregarObra(user, new DatosObra(title, TipoMedio.MANGA, "Una historia de aventuras",
                 "Aventura", 20, duration, false));
     }
 
@@ -198,8 +198,8 @@ class AplicacionIntegracionTest {
     void pasosEnLaTarjetaRespetanLimitesYConservanLosDetalles() throws Exception {
         var usuario = account();
         var sesion = login(usuario);
-        var p = catalog.add(usuario.id, new DatosObra("Cowboy Bebop", TipoMedio.ANIME, "", "", 26, 24, false));
-        catalog.update(usuario.id, p.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 25, 0, 1, "TV"));
+        var p = catalog.agregarObra(usuario.id, new DatosObra("Cowboy Bebop", TipoMedio.ANIME, "", "", 26, 24, false));
+        catalog.actualizarProgreso(usuario.id, p.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 25, 0, 1, "TV"));
         String ruta = "/api/catalog/" + p.id + "/paso";
         for (int i = 0; i < 2; i++) {
             mvc.perform(post(ruta).session(sesion).with(csrf()).param("paso", "1"))
@@ -249,9 +249,9 @@ class AplicacionIntegracionTest {
     void igdbAsociaHorasAlIdYEnriqueceUnaFichaGuardadaSinPerderProgreso() throws Exception {
         var usuario = account();
         var sesion = login(usuario);
-        var progreso = catalog.add(usuario.id, new DatosObra("Juego sin coincidencia local", TipoMedio.GAME,
+        var progreso = catalog.agregarObra(usuario.id, new DatosObra("Juego sin coincidencia local", TipoMedio.GAME,
                 "", "", 0, 60, false));
-        catalog.update(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 4, 0, 0, ""));
+        catalog.actualizarProgreso(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 4, 0, 0, ""));
         mvc.perform(get("/api/catalog/search").session(sesion).param("source", "VIDEOJUEGOS").param("q", "Juego"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].horasHistoriaPrincipal").value(12.5))
                 .andExpect(jsonPath("$[1].horasHistoriaPrincipal").doesNotExist());
@@ -270,7 +270,7 @@ class AplicacionIntegracionTest {
     void unityImportadoMuestraDuracionYGuardaLaPortadaAlAbrirSuTarjeta() throws Exception {
         var usuario = account();
         var sesion = login(usuario);
-        var anterior = catalog.addImported(usuario.id, new DatosObra("Assassin's Creed Unity", TipoMedio.GAME,
+        var anterior = catalog.guardarObraEnBiblioteca(usuario.id, new DatosObra("Assassin's Creed Unity", TipoMedio.GAME,
                 "", "", 0, 60, false), "RAWG", "1970", null, null);
         long id = anterior.work.id;
         mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
@@ -284,9 +284,9 @@ class AplicacionIntegracionTest {
     void juegoManualConservaHorasJugadasYRecuperaPortada() throws Exception {
         var usuario = account();
         var sesion = login(usuario);
-        var progreso = catalog.add(usuario.id, new DatosObra("Cyberpunk 2077", TipoMedio.GAME,
+        var progreso = catalog.agregarObra(usuario.id, new DatosObra("Cyberpunk 2077", TipoMedio.GAME,
                 "", "", 12, 15, false));
-        catalog.update(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 32, 0, 0, ""));
+        catalog.actualizarProgreso(usuario.id, progreso.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 32, 0, 0, ""));
         mvc.perform(get("/api/catalog").session(sesion)).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].work.horasHistoriaPrincipal").value(26.0))
                 .andExpect(jsonPath("$[0].currentUnits").value(32));
@@ -369,7 +369,7 @@ class AplicacionIntegracionTest {
         mvc.perform(post("/api/tasks/" + t.id + "/start").session(session).with(csrf()))
                 .andExpect(status().isNotFound());
         assertThrows(ErrorNegocio.class,
-                () -> tasks.editar(b.id, t.id, new DatosTarea("Otro", "", "ESTUDIO", "ALTA", 10)));
+                () -> tasks.editarTarea(b.id, t.id, new DatosTarea("Otro", "", "ESTUDIO", "ALTA", 10)));
     }
 
     @Test
@@ -379,7 +379,7 @@ class AplicacionIntegracionTest {
         tasks.aplicarAccion(a.id, t.id, "start");
         tasks.aplicarAccion(a.id, t.id, "pause");
         assertThrows(ErrorNegocio.class,
-                () -> tasks.editar(a.id, t.id, new DatosTarea("Trampa", "", "ESTUDIO", "ALTA", 720)));
+                () -> tasks.editarTarea(a.id, t.id, new DatosTarea("Trampa", "", "ESTUDIO", "ALTA", 720)));
     }
 
     @Test
@@ -431,9 +431,9 @@ class AplicacionIntegracionTest {
         var a = account();
         var p = work(a.id, "Libro" + a.id, 10);
         assertThrows(ErrorNegocio.class, () -> work(a.id, "Libro" + a.id, 10));
-        assertThrows(ErrorNegocio.class, () -> catalog.update(a.id, p.id,
+        assertThrows(ErrorNegocio.class, () -> catalog.actualizarProgreso(a.id, p.id,
                 new DatosProgreso(EstadoProgreso.IN_PROGRESS, 21, 0, 0, "")));
-        catalog.update(a.id, p.id, new DatosProgreso(EstadoProgreso.COMPLETED, 20, 2, 0, ""));
+        catalog.actualizarProgreso(a.id, p.id, new DatosProgreso(EstadoProgreso.COMPLETED, 20, 2, 0, ""));
         assertTrue(tx.<Boolean>execute(
                 s -> repositorio.insignias(a.id).stream().anyMatch(b -> b.code.equals("FINISHER"))));
     }
@@ -443,14 +443,14 @@ class AplicacionIntegracionTest {
         var a = account();
         var p = work(a.id, "Misión" + a.id, 10);
         var m = missions.generate(a.id).getFirst();
-        catalog.update(a.id, p.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 3, 0, 0, ""));
+        catalog.actualizarProgreso(a.id, p.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 3, 0, 0, ""));
         missions.claim(a.id, m.id);
         assertEquals(40, balance(a.id));
         assertThrows(ErrorNegocio.class, () -> missions.claim(a.id, m.id));
         var b = account();
         var p2 = work(b.id, "Caduca" + b.id, 10);
         var m2 = missions.generate(b.id).getFirst();
-        catalog.update(b.id, p2.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 3, 0, 0, ""));
+        catalog.actualizarProgreso(b.id, p2.id, new DatosProgreso(EstadoProgreso.IN_PROGRESS, 3, 0, 0, ""));
         clock.instant = m2.expiresAt;
         assertThrows(ErrorNegocio.class, () -> missions.claim(b.id, m2.id));
         assertEquals(0, balance(b.id));

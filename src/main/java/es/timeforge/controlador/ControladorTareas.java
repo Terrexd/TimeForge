@@ -53,22 +53,22 @@ public class ControladorTareas {
     /** Crea una nueva tarea con tiempo estimado y prioridad. */
     @PostMapping("/tasks")
     public Tarea crearTarea(Principal sesion, @Valid @RequestBody DatosTarea datos) {
-        return servicioTareas.crear(idUsuario(sesion), datos);
+        return servicioTareas.crearTarea(idUsuario(sesion), datos);
     }
 
     /** Modifica una tarea existente que aún no ha sido iniciada. */
     @PutMapping("/tasks/{id}")
     public Tarea editarTarea(Principal sesion, @PathVariable long id, @Valid @RequestBody DatosTarea datos) {
-        return servicioTareas.editar(idUsuario(sesion), id, datos);
+        return servicioTareas.editarTarea(idUsuario(sesion), id, datos);
     }
 
     /** Elimina una tarea pendiente. */
     @DeleteMapping("/tasks/{id}")
     public void eliminarTarea(Principal sesion, @PathVariable long id) {
-        servicioTareas.eliminar(idUsuario(sesion), id);
+        servicioTareas.eliminarTarea(idUsuario(sesion), id);
     }
 
-    /** Acciones de ciclo de vida del cronómetro: start, pause, resume, cancel, complete. */
+    /** Acciones de ciclo de vida del cronómetro: iniciar o reanudar (start), pausar, cancelar y completar. */
     @PostMapping("/tasks/{id}/{action}")
     public Tarea accionTarea(Principal sesion, @PathVariable long id, @PathVariable("action") String accion) {
         return servicioTareas.aplicarAccion(idUsuario(sesion), id, accion);

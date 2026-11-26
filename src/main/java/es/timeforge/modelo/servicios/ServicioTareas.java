@@ -29,7 +29,7 @@ public class ServicioTareas {
         this.reloj = reloj;
     }
 
-    public Tarea crear(long idUsuario, DatosTarea datos) {
+    public Tarea crearTarea(long idUsuario, DatosTarea datos) {
         var usuario = usuarios.locked(idUsuario);
         var tarea = new Tarea();
         tarea.owner = usuario;
@@ -38,7 +38,7 @@ public class ServicioTareas {
         return repositorio.guardar(tarea);
     }
 
-    public Tarea editar(long idUsuario, long id, DatosTarea datos) {
+    public Tarea editarTarea(long idUsuario, long id, DatosTarea datos) {
         usuarios.locked(idUsuario);
         var tarea = recursos.task(idUsuario, id);
         require(!tarea.timed && tarea.state == EstadoTarea.PENDING,
@@ -56,7 +56,7 @@ public class ServicioTareas {
         tarea.estimatedMinutes = datos.estimatedMinutes();
     }
 
-    public void eliminar(long idUsuario, long id) {
+    public void eliminarTarea(long idUsuario, long id) {
         usuarios.locked(idUsuario);
         var tarea = recursos.task(idUsuario, id);
         require(tarea.state == EstadoTarea.PENDING && !tarea.timed,

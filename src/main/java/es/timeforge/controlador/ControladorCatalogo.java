@@ -30,94 +30,94 @@ import org.springframework.web.bind.annotation.*;
 public class ControladorCatalogo {
 
     private final Repositorio repositorio;
-    private final ServicioUsuarios accounts;
-    private final ServicioCatalogo catalog;
-    private final Oraculo oracle;
-    private final CatalogoExterno external;
+    private final ServicioUsuarios usuarios;
+    private final ServicioCatalogo servicioCatalogo;
+    private final Oraculo oraculo;
+    private final CatalogoExterno catalogoExterno;
 
-    public ControladorCatalogo(Repositorio repositorio, ServicioUsuarios accounts, ServicioCatalogo catalog,
-            Oraculo oracle, CatalogoExterno external) {
+    public ControladorCatalogo(Repositorio repositorio, ServicioUsuarios usuarios, ServicioCatalogo servicioCatalogo,
+            Oraculo oraculo, CatalogoExterno catalogoExterno) {
         this.repositorio = repositorio;
-        this.accounts = accounts;
-        this.catalog = catalog;
-        this.oracle = oracle;
-        this.external = external;
+        this.usuarios = usuarios;
+        this.servicioCatalogo = servicioCatalogo;
+        this.oraculo = oraculo;
+        this.catalogoExterno = catalogoExterno;
     }
 
-    private long user(Principal principal) {
-        if (principal == null)
+    private long idUsuario(Principal sesion) {
+        if (sesion == null)
             throw new ErrorNegocio(401, "Inicia sesión para continuar");
-        return accounts.current(principal.getName()).id;
+        return usuarios.current(sesion.getName()).id;
     }
 
     /** Obtiene el backlog completo del usuario con su progreso individual. */
     @GetMapping("/catalog")
     @Transactional(readOnly = true)
-    public List<Progreso> listarCatalogo(Principal principal) {
-        return repositorio.catalogoPersonal(user(principal));
+    public List<Progreso> listarCatalogo(Principal sesion) {
+        return repositorio.catalogoPersonal(idUsuario(sesion));
     }
 
     /** Añade manualmente una nueva obra al catálogo personal. */
     @PostMapping("/catalog")
-    public Progreso agregarObra(Principal principal, @Valid @RequestBody DatosObra input) {
-        return catalog.add(user(principal), input);
+    public Progreso agregarObra(Principal sesion, @Valid @RequestBody DatosObra datos) {
+        return servicioCatalogo.agregarObra(idUsuario(sesion), datos);
     }
 
     /** Actualiza el estado y progreso (capítulos, horas) de una obra. */
     @PutMapping("/catalog/{id}")
-    public Progreso actualizarProgreso(Principal principal, @PathVariable long id,
-            @Valid @RequestBody DatosProgreso input) {
-        return catalog.update(user(principal), id, input);
+    public Progreso actualizarProgreso(Principal sesion, @PathVariable long id,
+            @Valid @RequestBody DatosProgreso datos) {
+        return servicioCatalogo.actualizarProgreso(idUsuario(sesion), id, datos);
     }
 
     @PostMapping("/catalog/{id}/paso")
-    public Progreso ajustarCapitulo(Principal principal, @PathVariable long id, @RequestParam int paso) {
-        return catalog.ajustarCapitulo(user(principal), id, paso);
+    public Progreso ajustarCapitulo(Principal sesion, @PathVariable long id, @RequestParam int paso) {
+        return servicioCatalogo.ajustarCapitulo(idUsuario(sesion), id, paso);
     }
 
     /** Elimina una obra del backlog personal del usuario. */
     @DeleteMapping("/catalog/{id}")
-    public void eliminarObra(Principal principal, @PathVariable long id) {
-        catalog.delete(user(principal), id);
+    public void eliminarObra(Principal sesion, @PathVariable long id) {
+        servicioCatalogo.eliminarObra(idUsuario(sesion), id);
     }
 
     /** Clasifica automáticamente una obra mediante Inteligencia Artificial a partir de su sinopsis. */
     @PostMapping("/catalog/{id}/classify")
-    public Oraculo.Answer clasificarObra(Principal principal, @PathVariable long id) {
-        return oracle.classify(user(principal), id);
+    public Oraculo.Answer clasificarObra(Principal sesion, @PathVariable long id) {
+        return oraculo.classify(idUsuario(sesion), id);
     }
 
     /** Busca obras en catálogos remotos (IGDB o Steam para juegos, Jikan/AniList para manga y anime). */
     @GetMapping("/catalog/search")
-    public List<Map<String, Object>> buscarObrasExternas(Principal principal, @RequestParam String source,
+    public List<Map<String, Object>> buscarObrasExternas(Principal sesion, @RequestParam String source,
             @RequestParam(defaultValue = "") String q) {
-        user(principal);
-        return external.search(source, q);
+        idUsuario(sesion);
+        return catalogoExterno.search(source, q);
     }
 
     /** Importa una obra remota al catálogo del usuario con su portada e información. */
     @PostMapping("/catalog/import")
-    public Progreso importarObra(Principal principal, @Valid @RequestBody DatosImportacion input) {
-        return external.importWork(user(principal), input.source(), input.externalId());
+    public Progreso importarObra(Principal sesion, @Valid @RequestBody DatosImportacion datos) {
+        return catalogoExterno.importWork(idUsuario(sesion), datos.source(), datos.externalId());
     }
 
     /** Sirve la portada almacenada de una obra multimedia. */
     @GetMapping("/covers/{id}")
-    public ResponseEntity<byte[]> obtenerPortada(Principal principal, @PathVariable long id) {
-        user(principal);
-        var work = repositorio.buscarPorId(Obra.class, id);
-        if (work == null)
+    public ResponseEntity<byte[]> obtenerPortada(Principal sesion, @PathVariable long id) {
+        idUsuario(sesion);
+        var obra = repositorio.buscarPorId(Obra.class, id);
+        if (obra == null)
             return ResponseEntity.notFound().build();
-        if (work.cover == null && work.type == es.timeforge.modelo.entidades.TipoMedio.GAME) {
-            work.cover = external.portadaJuego(work);
-            if (work.cover != null) {
-                work.coverType = es.timeforge.modelo.integraciones.ClienteJson.tipoImagen(work.cover);
-                repositorio.guardarPortadaSiFalta(id, work.cover, work.coverType);
+        if (obra.cover == null && obra.type == es.timeforge.modelo.entidades.TipoMedio.GAME) {
+            obra.cover = catalogoExterno.portadaJuego(obra);
+            if (obra.cover != null) {
+                obra.coverType = es.timeforge.modelo.integraciones.ClienteJson.tipoImagen(obra.cover);
+                repositorio.guardarPortadaSiFalta(id, obra.cover, obra.coverType);
             }
         }
-        if (work.cover == null)
+        if (obra.cover == null)
             return ResponseEntity.status(404).cacheControl(CacheControl.maxAge(Duration.ofMinutes(5)).cachePrivate()).build();
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(work.coverType))
-                .cacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePrivate()).body(work.cover);
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(obra.coverType))
+                .cacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePrivate()).body(obra.cover);
     }
 }

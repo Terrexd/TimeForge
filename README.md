@@ -40,12 +40,23 @@ Para juegos de Steam y fichas sin duración en IGDB, TimeForge consulta una copi
 ## Sigue una tarea desde el formulario hasta la base de datos
 
 1. Abre [formularios.js](src/main/resources/vista/formularios.js) y busca `formularioTarea`. Ahí se muestran los campos que rellenas al crear una tarea.
-2. Al pulsar **Crear tarea**, [eventos.js](src/main/resources/vista/eventos.js) recoge el envío de `task-form` y hace una petición `POST /api/tasks`.
+2. Al pulsar **Crear tarea**, [eventos.js](src/main/resources/vista/eventos.js) recoge el envío de `task-form`. Busca `guardarTarea` para ver las dos posibilidades del formulario. Al crear envía `POST /api/tasks`. Al editar recibe el identificador de la tarea y envía `PUT /api/tasks/{id}`.
 3. En [ControladorTareas.java](src/main/java/es/timeforge/controlador/ControladorTareas.java), `crearTarea` recibe los datos validados, identifica al usuario y llama al servicio.
-4. En [ServicioTareas.java](src/main/java/es/timeforge/modelo/servicios/ServicioTareas.java), `crear` construye una [Tarea](src/main/java/es/timeforge/modelo/entidades/Tarea.java), le asigna el usuario y pide al [Repositorio](src/main/java/es/timeforge/modelo/repositorio/Repositorio.java) que la guarde.
+4. En [ServicioTareas.java](src/main/java/es/timeforge/modelo/servicios/ServicioTareas.java), `crearTarea` construye una [Tarea](src/main/java/es/timeforge/modelo/entidades/Tarea.java), le asigna el usuario y pide al [Repositorio](src/main/java/es/timeforge/modelo/repositorio/Repositorio.java) que la guarde.
 5. La vista vuelve a cargar las tareas. [pantallas.js](src/main/resources/vista/pantallas.js) dibuja la lista actualizada.
 
 Si quieres cambiar **qué se ve**, empieza por la vista. Si quieres cambiar **cuántas monedas se ganan**, abre [ReglasRecompensa.java](src/main/java/es/timeforge/modelo/servicios/ReglasRecompensa.java). Las rutas y los campos que intercambian el navegador y el servidor conservan sus nombres originales, como `/api/tasks` y `estimatedMinutes`.
+
+## Preguntas para recorrer el código en el IDE
+
+| Si te preguntan… | Por dónde empezar | Qué seguir en el código |
+| --- | --- | --- |
+| ¿Dónde añadirías un campo a una tarea? | Busca `estimatedMinutes` como ejemplo en `formularioTarea`. | Sigue el campo por `guardarTarea`, el registro `DatosTarea`, el método `ServicioTareas.asignarDatos` y la entidad `Tarea`. Para mostrarlo en la lista, abre `tarjetaTarea`. |
+| ¿Qué pasa al borrar una tarea? | En `tarjetaTarea`, el botón **Borrar** lleva la acción `delete-task`. | En `eventos.js`, `confirm-delete-task` envía el borrado tras confirmarlo. Busca `eliminarTarea` en el controlador y en el servicio. El servicio comprueba el propietario y exige que esté pendiente y sin cronometraje antes de llamar a `repositorio.eliminar`. |
+| ¿Dónde se añade una obra a la biblioteca? | En `eventos.js`, busca `work-form` para el alta manual o `import-work` para **Buscar online**. | En `ControladorCatalogo` entran por `agregarObra` e `importarObra`. Ambos recorridos llegan a `ServicioCatalogo.guardarObraEnBiblioteca`, donde se busca o crea la ficha y se registra el progreso del usuario. |
+| ¿Qué elimina la papelera de la biblioteca? | En `tarjetaObra`, fíjate en el identificador que lleva `delete-work`. | `confirm-delete-work` envía el identificador del progreso a `DELETE /api/catalog/{id}`. Sigue `eliminarObra` hasta el servicio. Allí se comprueba si hay un descanso activo con esa obra y se elimina la entrada personal. La ficha compartida sigue disponible para los demás usuarios. |
+
+Para localizar otra función, abre el [directorio de controladores](src/main/java/es/timeforge/controlador) y elige el tema, por ejemplo `ControladorDescansos`, `ControladorSocial` o `ControladorAdministracion`. Dentro del método, usa **Ir a la definición** sobre la llamada al servicio para saltar a la regla que se aplica. Si partes de un botón, busca su `data-action` en [eventos.js](src/main/resources/vista/eventos.js) para localizar la petición que lo conecta con el controlador.
 
 ## Pruebas y requisitos
 
