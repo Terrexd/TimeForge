@@ -56,16 +56,9 @@ Maven empaquetó el JAR con 42 pruebas aprobadas, sin errores ni omisiones. Node
 
 Tras incorporar los campos de pausa, la tabla `rest_session` de la base de datos local H2 requirió la migración explícita de las columnas `paused` (booleano con valor por defecto false) y `remaining_seconds` (entero con valor por defecto 0). Se agregaron las anotaciones `@Column(columnDefinition = ...)` en `Descanso.java` y se validó con una prueba automatizada autenticada que todos los endpoints del sistema (`/me`, `/tasks`, `/catalog`, `/rests`, `/missions`, `/friends`, `/wallet`) responden correctamente con código 200 OK.
 
-## Auditoría general y estado del proyecto
+## Comprobación de RF-06 y RF-13 a RF-24
 
-Se ha auditado el cumplimiento de los 24 requisitos funcionales (RF-01 a RF-24) y las 9 reglas de negocio (RN-01 a RN-09):
-1. **Módulo 1 (Cuentas y Perfil):** Registro BCrypt, autenticación de sesión, CSRF y edición de perfil al 100 %.
-2. **Módulo 2 (Tareas y Recompensas):** CRUD de tareas, cronómetro en vivo persistente, cálculo de monedas con penalización progresiva y métricas de desviación temporal al 100 %.
-3. **Módulo 3 (Catálogo Multimedia):** Biblioteca con estados, control escalonado unitario, búsqueda remota unificada y tolerancia a fallos de API externa al 100 %.
-4. **Módulo 4 (Billetera y Ruleta de Descansos):** Canje de descansos (15/30/60 min), pausa/reanudación de descansos, ruleta ponderada probabilística con filtros y temporizador regresivo de descanso al 100 %.
-5. **Módulo 5 (El Oráculo IA):** Justificación de recomendaciones, etiquetado de ritmo y sinopsis con fallback local sin conexión al 100 %.
-6. **Módulo 6 (Social, Misiones y Logros):** Misiones semanales dinámicas, insignias automáticas, gestión de amigos y giros cooperativos de ruleta al 100 %.
-7. **Módulo 7 (Administración):** Gestión de usuarios (suspender/reactivar/eliminar) y métricas de consumo/latencia de IA al 100 %.
+Javier indicó que todavía no había visto estos recorridos. Se revisaron las pantallas, los servicios y los casos automatizados. Maven ejecutó 43 pruebas sin fallos, errores ni omisiones. Cubren, entre otros casos, el cálculo de monedas, los pesos de la ruleta, el bloqueo por saldo, la caducidad, la reclamación única de misiones y el cobro cooperativo. Falta la demostración personal en navegador y una respuesta real de Gemini. RF-18 requiere pulsar «Sugerir etiquetas con IA». RF-20 cuenta obras completadas sin comprobar que formen una saga. Se retira la valoración global del 100 %.
 
 ## Recarga de monedas para pruebas
 
