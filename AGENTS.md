@@ -44,7 +44,13 @@ Cada tarjeta de la biblioteca tiene una papelera junto al título con confirmaci
 
 ## Pausa y reanudación de descansos
 
-Se incorporó la posibilidad de pausar y reanudar los descansos activos. Al pausar, se congelan los segundos restantes en el servidor y la interfaz entra en estado pausado (mostrando etiqueta `EN PAUSA`, temporizador en ámbar y botón `▷ Reanudar descanso`). Al reanudar, se recalcula la fecha de fin a partir del tiempo restante exacto. El banner superior global también permite pausar o reanudar el descanso desde cualquier sección de la aplicación sin perder tiempo ni monedas.
+Al pausar, el servidor guarda los segundos restantes, redondeando hacia arriba la fracción en curso. Se puede pausar incluso durante el último segundo. Al reanudar se conserva la fecha de inicio original y se recalcula la fecha de fin. La vista muestra `EN PAUSA`, el temporizador en ámbar y el botón `▷ Reanudar descanso`. El banner superior también permite pausar y reanudar.
+
+## Primera ronda de pruebas funcionales · 26 de noviembre de 2026
+
+Se reprodujeron dos fallos del descanso antes de corregirlos. A 250 ms del final, la API rechazaba la pausa con HTTP 400. Reanudar cambiaba la fecha de inicio del historial. Las pruebas de regresión cubren ambos casos y el vencimiento después de reanudar. Otra prueba autenticada crea, edita, consulta y borra una tarea por la API.
+
+Maven empaquetó el JAR con 42 pruebas aprobadas, sin errores ni omisiones. Node comprobó la sintaxis de los cuatro archivos JavaScript. Se arrancó el JAR con H2 en memoria y Edge renderizó el formulario de acceso. La portada y sus seis recursos devolvieron HTTP 200. Quedan por probar los recorridos autenticados completos en navegador, el perfil MySQL y los proveedores externos reales.
 
 ## Migración de esquema en descansos
 

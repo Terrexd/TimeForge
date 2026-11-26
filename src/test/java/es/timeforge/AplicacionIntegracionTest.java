@@ -576,6 +576,45 @@ class AplicacionIntegracionTest {
     }
 
     @Test
+    void crearEditarYBorrarTareaDesdeLaApi() throws Exception {
+        var sesion = login(account());
+        var alta = new DatosTarea("Repasar", "", "ESTUDIO", "MEDIA", 15);
+        var creada = body(mvc.perform(post("/api/tasks").session(sesion).with(csrf())
+                .contentType("application/json").content(json.writeValueAsString(alta)))
+                .andExpect(status().isOk()).andReturn());
+        var ruta = "/api/tasks/" + creada.required("id").asLong();
+        var edicion = new DatosTarea("Repasar Java", "Colecciones", "ESTUDIO", "ALTA", 30);
+        mvc.perform(put(ruta).session(sesion).with(csrf())
+                .contentType("application/json").content(json.writeValueAsString(edicion)))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/tasks").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Repasar Java"))
+                .andExpect(jsonPath("$[0].estimatedMinutes").value(30));
+        mvc.perform(delete(ruta).session(sesion).with(csrf())).andExpect(status().isOk());
+        mvc.perform(get("/api/tasks").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void pausarEnElUltimoSegundoDelDescanso() throws Exception {
+        var usuario = account();
+        fund(usuario.id);
+        work(usuario.id, "Último segundo", 10);
+        var sesion = login(usuario);
+        var descanso = rests.spin(usuario.id, 15, null);
+        var ruta = "/api/rests/" + descanso.id;
+        clock.instant = descanso.endsAt.minusMillis(250);
+        mvc.perform(post(ruta + "/pause").session(sesion).with(csrf()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.remainingSeconds").value(1));
+        clock.advance(60);
+        mvc.perform(post(ruta + "/resume").session(sesion).with(csrf()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.paused").value(false));
+        clock.advance(1);
+        mvc.perform(get("/api/rests").session(sesion)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].completed").value(true));
+    }
+
+    @Test
     void restCanBePausedAndResumed() {
         var a = account();
         fund(a.id);
@@ -599,6 +638,7 @@ class AplicacionIntegracionTest {
         // Reanudar el descanso
         var resumed = rests.resume(a.id, r.id);
         assertFalse(resumed.paused);
+        assertEquals(r.startedAt, resumed.startedAt);
 
         // Terminar el descanso restante
         clock.advance(600);

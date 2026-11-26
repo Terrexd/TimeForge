@@ -101,10 +101,11 @@ public class ServicioDescansos {
         var r = owned.rest(user, id);
         require(!r.cancelled && !r.completed, "El descanso ya ha finalizado");
         require(!r.paused, "El descanso ya está pausado");
-        int left = (int) Math.max(0, Duration.between(clock.instant(), r.endsAt).getSeconds());
-        require(left > 0, "El descanso ya ha finalizado");
+        Duration restante = Duration.between(clock.instant(), r.endsAt);
+        require(restante.isPositive(), "El descanso ya ha finalizado");
         r.paused = true;
-        r.remainingSeconds = left;
+        // El contador guarda segundos enteros. Conservamos también el segundo en curso.
+        r.remainingSeconds = Math.toIntExact(restante.getSeconds() + (restante.getNano() == 0 ? 0 : 1));
         return r;
     }
 
@@ -116,7 +117,6 @@ public class ServicioDescansos {
         require(repositorio.tareas(user).stream().noneMatch(t -> t.state == EstadoTarea.RUNNING),
                 "Pausa la tarea activa antes de reanudar el descanso");
         r.paused = false;
-        r.startedAt = clock.instant();
         r.endsAt = clock.instant().plusSeconds(Math.max(1, r.remainingSeconds));
         return r;
     }
