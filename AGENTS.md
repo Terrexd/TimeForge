@@ -20,6 +20,8 @@ TimeForge es el proyecto intermodular de DAM de Javier Valencia Miranda. El usua
 
 ## Decisiones y comprobaciones vigentes
 
+**Arranque desde Windows.** La consola H2 externa mantenía abierto `.data/timeforge.mv.db` y Spring no podía arrancar. Tras cerrar esa conexión, se arrancó con los datos locales. `iniciar.bat` solicita abrir el navegador cuando Spring emite `ApplicationReadyEvent` e indica cómo liberar la base si el arranque falla. Pasaron 43 pruebas, se empaquetó el JAR y se comprobó HTTP 200 en la portada, `/bbdd`, el JavaScript del visor y el punto de acceso CSRF.
+
 **Consulta de la base de datos.** Con TimeForge en marcha, el administrador puede abrir **Administración → Consultar la base de datos** o visitar `/bbdd`. Las 13 vistas SQL ofrecen nombres y columnas en español sobre los registros existentes. El visor muestra 50 filas por página y omite contraseñas y portadas binarias. H2 sigue guardando los datos en `.data/timeforge.mv.db`. El archivo tiene formato binario.
 
 **Comprobación del visor.** Una compilación limpia generó el ejecutable `target/timeforge.jar` y superó 43 pruebas. Se verificaron las 13 vistas en H2 y los permisos para visitantes, usuarios y administradores. Se probó el JAR por HTTP con una sesión administrativa y se consultó el rol en español en la vista de usuarios. Node comprobó el JavaScript modificado. El perfil MySQL sigue pendiente de prueba en un servidor real.

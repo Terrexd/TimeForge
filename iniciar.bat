@@ -12,16 +12,15 @@ if exist "C:\Program Files\Java\jdk-27\bin\java.exe" (
     set "JAVA_CMD=C:\Program Files\Java\jdk-27\bin\java.exe"
 )
 
-echo Abriendo navegador en http://localhost:8080 ...
-timeout /t 2 /nobreak >nul
-start http://localhost:8080
-
-echo.
-echo Iniciando servidor en el puerto 8080...
-echo Base de datos: http://localhost:8080/bbdd
+echo El navegador se abrira cuando TimeForge este listo.
 echo (Para detener la aplicacion, simplemente cierra esta ventana o pulsa Ctrl + C)
 echo.
 
-"%JAVA_CMD%" -jar target\timeforge.jar
+"%JAVA_CMD%" -jar target\timeforge.jar --timeforge.abrir-navegador=true
+if errorlevel 1 (
+    echo.
+    echo No se pudo iniciar TimeForge. Revisa el error anterior.
+    echo Si H2 indica que la base de datos esta en uso, pulsa Disconnect en la consola H2.
+)
 
 pause
